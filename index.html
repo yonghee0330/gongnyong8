@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공룡 에이트 | Gongnyong Eight</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <img class="dino dino-header-left" src="images/dino3.jpg" alt="귀여운 초록 공룡">
+    <div class="header-inner">
+      <p class="header-kicker">Gongnyong Eight</p>
+      <h1>🦕 공룡 에이트</h1>
+      <p class="header-subtitle">한 달에 한 권, 함께 읽고 함께 이야기해요</p>
+      <p class="members">박용희 · 강지혜 · 김양우 · 남우현 · 서수정 · 이정은 · 최별님 · Ellory Park</p>
+    </div>
+    <img class="dino dino-header-right" src="images/dino3.jpg" alt="반대편을 보는 귀여운 초록 공룡">
+  </header>
+
+  <main>
+    <section class="month-section" aria-labelledby="monthTitle">
+      <div class="section-leaves" aria-hidden="true"></div>
+      <div class="section-head compact">
+        <p class="eyebrow">Monthly Archive</p>
+        <h2 id="monthTitle">읽을 달을 골라요</h2>
+      </div>
+      <div class="month-tabs" id="monthTabs" aria-label="월 선택"></div>
+      <img class="dino dino-tab-peek" src="images/dino3.jpg" alt="고개를 내민 공룡">
+    </section>
+
+    <section class="book-section panel" aria-labelledby="bookTitleHeading">
+      <div class="section-leaves left" aria-hidden="true"></div>
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Book of May</p>
+          <h2 id="bookTitleHeading">🦕 5월의 책</h2>
+        </div>
+        <button class="action-button" type="button" data-open-modal="bookModal">+ 책 수정하기</button>
+      </div>
+
+      <article class="book-card">
+        <div class="cover-wrap">
+          <img id="bookCover" class="book-cover" src="" alt="" width="130" height="190">
+        </div>
+        <div class="book-info">
+          <h3 id="bookTitle"></h3>
+          <dl>
+            <div>
+              <dt>저자</dt>
+              <dd id="bookAuthor"></dd>
+            </div>
+            <div>
+              <dt>출판사</dt>
+              <dd id="bookPublisher"></dd>
+            </div>
+            <div>
+              <dt>정가</dt>
+              <dd id="bookPrice"></dd>
+            </div>
+          </dl>
+          <p id="bookIntro" class="book-intro"></p>
+          <a id="bookLink" class="link-button" href="#" target="_blank" rel="noopener noreferrer">책 정보 더보기</a>
+        </div>
+        <img class="dino dino-book" src="images/dino1.jpg" alt="책 읽는 공룡">
+      </article>
+    </section>
+
+    <section class="reference-section panel green-panel" aria-labelledby="referenceTitle">
+      <img class="dino dino-reference" src="images/dino2.jpg" alt="책을 얹은 공룡">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">References</p>
+          <h2 id="referenceTitle">📎 함께 보면 좋은 것들</h2>
+        </div>
+        <button class="action-button" type="button" data-open-modal="referenceModal">+ 레퍼런스 추가</button>
+      </div>
+      <div class="reference-grid" id="referenceGrid"></div>
+    </section>
+
+    <section class="quote-section panel" aria-labelledby="quoteTitle">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Favorite Lines</p>
+          <h2 id="quoteTitle">💬 좋았던 구절 나누기</h2>
+        </div>
+        <button class="action-button" type="button" data-open-modal="quoteModal">+ 구절 추가하기</button>
+      </div>
+      <div class="quote-side-note">
+        <img class="dino dino-quote" src="images/dino3.jpg" alt="구절을 쓰는 공룡">
+        <span>연필 든 마음으로 밑줄을 나눠요</span>
+      </div>
+      <div class="quote-list" id="quoteList"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <img class="dino dino-footer" src="images/dino1.jpg" alt="책 읽는 공룡과 친구들">
+    <strong>공룡 에이트 🦕 Gongnyong Eight</strong>
+    <span>함께 읽어요 📚 2026</span>
+  </footer>
+
+  <dialog class="modal" id="bookModal">
+    <form class="modal-card" id="bookForm">
+      <button class="close-button" type="button" data-close-modal aria-label="닫기">×</button>
+      <h2>책 수정하기</h2>
+      <label>책 표지 URL<input name="coverUrl" type="url" required></label>
+      <label>제목<input name="title" required></label>
+      <label>저자<input name="author" required></label>
+      <label>출판사<input name="publisher" required></label>
+      <label>정가<input name="price" required></label>
+      <label>소개<textarea name="intro" rows="4" required></textarea></label>
+      <label>책 정보 더보기 링크<input name="linkUrl" type="url" required></label>
+      <button class="action-button full" type="submit">저장하기</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="referenceModal">
+    <form class="modal-card" id="referenceForm">
+      <button class="close-button" type="button" data-close-modal aria-label="닫기">×</button>
+      <h2>레퍼런스 추가</h2>
+      <label>제목<input name="title" required placeholder="함께 볼 자료 제목"></label>
+      <label>URL<input name="url" required placeholder="https:// 또는 #"></label>
+      <label>종류
+        <select name="type" required>
+          <option value="유튜브🎬">유튜브🎬</option>
+          <option value="기사📰">기사📰</option>
+          <option value="블로그✍️">블로그✍️</option>
+          <option value="기타🔗">기타🔗</option>
+        </select>
+      </label>
+      <label>등록자<input name="author" required placeholder="공룡8호"></label>
+      <button class="action-button full" type="submit">추가하기</button>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="quoteModal">
+    <form class="modal-card" id="quoteForm">
+      <button class="close-button" type="button" data-close-modal aria-label="닫기">×</button>
+      <h2>구절 추가하기</h2>
+      <label>구절<textarea name="text" rows="4" required placeholder="마음에 남은 문장을 적어주세요."></textarea></label>
+      <label>페이지<input name="page" inputmode="numeric" required placeholder="13"></label>
+      <label>작성자<input name="author" required placeholder="공룡1호"></label>
+      <button class="action-button full" type="submit">등록하기</button>
+    </form>
+  </dialog>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = 'gongnyong8-simple-reading-data';
+      const CURRENT_MONTH = 5;
+      let selectedMonth = CURRENT_MONTH;
+
+      const defaultBook = {
+        coverUrl: 'https://image.aladin.co.kr/product/38850/29/cover500/k122137707_3.jpg',
+        title: '모르는 할머니',
+        author: '김보람 외 6인',
+        publisher: '돛과닻 (2026.04.17)',
+        price: '18,000원',
+        intro: "'할머니'를 바라보는 시선을 통해 여성의 삶을 다각도로 비추어보는 책. 영화감독, 활동가, 전도사, 작가, 연구자 등 각기 다른 일을 하는 여성들이 할머니에 관한 기억을 현재의 삶과 엮어 썼다.",
+        linkUrl: 'https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=388502929'
+      };
+
+      const emptyMonth = () => ({
+        book: { ...defaultBook, title: '', author: '', publisher: '', price: '', intro: '', linkUrl: '' },
+        references: [],
+        quotes: []
+      });
+
+      function createInitialData() {
+        return Array.from({ length: 12 }, (_, index) => index + 1).reduce((months, month) => {
+          months[month] = emptyMonth();
+          return months;
+        }, {});
+      }
+
+      function removeSampleData(months) {
+        let changed = false;
+
+        Object.values(months).forEach((month) => {
+          if (!month) {
+            return;
+          }
+
+          if (Array.isArray(month.references)) {
+            const references = month.references.filter((reference) => reference.id !== 'reference-sample-1');
+            changed ||= references.length !== month.references.length;
+            month.references = references;
+          }
+
+          if (Array.isArray(month.quotes)) {
+            const quotes = month.quotes.filter((quote) => quote.id !== 'quote-sample-1');
+            changed ||= quotes.length !== month.quotes.length;
+            month.quotes = quotes.map((quote) => {
+              if (!Array.isArray(quote.comments)) {
+                return { ...quote, comments: [] };
+              }
+
+              const comments = quote.comments.filter((comment) => comment.id !== 'comment-sample-1');
+              changed ||= comments.length !== quote.comments.length;
+              return { ...quote, comments };
+            });
+          }
+        });
+
+        if (changed) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(months));
+        }
+
+        return months;
+      }
+
+      function loadData() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          return saved ? removeSampleData(JSON.parse(saved)) : createInitialData();
+        } catch {
+          return createInitialData();
+        }
+      }
+
+      let data = loadData();
+      let editingReferenceId = null;
+      let editingQuoteId = null;
+
+      function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function getMonthData() {
+        data[selectedMonth] ||= emptyMonth();
+        data[selectedMonth].book ||= emptyMonth().book;
+        data[selectedMonth].references ||= [];
+        data[selectedMonth].quotes ||= [];
+        return data[selectedMonth];
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, (match) => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        })[match]);
+      }
+
+      function today() {
+        return new Date().toLocaleDateString('ko-KR');
+      }
+
+      function fillForm(form, values) {
+        Object.entries(values).forEach(([key, value]) => {
+          if (form.elements[key]) {
+            form.elements[key].value = value ?? '';
+          }
+        });
+      }
+
+      function setReferenceFormMode(reference = null) {
+        const form = document.querySelector('#referenceForm');
+        editingReferenceId = reference?.id ?? null;
+        form.querySelector('h2').textContent = editingReferenceId ? '레퍼런스 수정' : '레퍼런스 추가';
+        form.querySelector('[type="submit"]').textContent = editingReferenceId ? '수정하기' : '추가하기';
+        form.reset();
+        if (reference) {
+          fillForm(form, reference);
+        }
+      }
+
+      function setQuoteFormMode(quote = null) {
+        const form = document.querySelector('#quoteForm');
+        editingQuoteId = quote?.id ?? null;
+        form.querySelector('h2').textContent = editingQuoteId ? '구절 수정하기' : '구절 추가하기';
+        form.querySelector('[type="submit"]').textContent = editingQuoteId ? '수정하기' : '등록하기';
+        form.reset();
+        if (quote) {
+          fillForm(form, quote);
+        }
+      }
+
+      function renderMonthTabs() {
+        const monthTabs = document.querySelector('#monthTabs');
+        monthTabs.innerHTML = '';
+
+        for (let month = 1; month <= 12; month += 1) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = `month-tab${month === selectedMonth ? ' is-active' : ''}`;
+          button.textContent = `${month}월`;
+          button.setAttribute('aria-pressed', month === selectedMonth ? 'true' : 'false');
+          button.addEventListener('click', () => {
+            selectedMonth = month;
+            render();
+          });
+          monthTabs.append(button);
+        }
+      }
+
+      function renderBook() {
+        const book = getMonthData().book;
+        const hasBook = Boolean(book.title);
+        const displayBook = hasBook ? book : {
+          ...book,
+          coverUrl: '',
+          title: `${selectedMonth}월 책을 기다리는 중`,
+          author: '아직 미정',
+          publisher: '-',
+          price: '-',
+          intro: '책 수정하기 버튼으로 이달의 책을 등록해주세요.',
+          linkUrl: '#'
+        };
+
+        const cover = document.querySelector('#bookCover');
+        cover.src = displayBook.coverUrl || '';
+        cover.alt = displayBook.coverUrl ? `${displayBook.title} 표지` : '책 표지 없음';
+        cover.hidden = !displayBook.coverUrl;
+
+        document.querySelector('#bookTitleHeading').textContent = `🦕 ${selectedMonth}월의 책`;
+        document.querySelector('#bookTitle').textContent = displayBook.title;
+        document.querySelector('#bookAuthor').textContent = displayBook.author;
+        document.querySelector('#bookPublisher').textContent = displayBook.publisher;
+        document.querySelector('#bookPrice').textContent = displayBook.price;
+        document.querySelector('#bookIntro').textContent = displayBook.intro;
+
+        const link = document.querySelector('#bookLink');
+        link.href = displayBook.linkUrl || '#';
+        link.classList.toggle('is-disabled', !displayBook.linkUrl || displayBook.linkUrl === '#');
+      }
+
+      function renderReferences() {
+        const grid = document.querySelector('#referenceGrid');
+        const references = getMonthData().references;
+        grid.innerHTML = references.length ? '' : '<p class="empty">아직 등록된 레퍼런스가 없어요.</p>';
+
+        references.forEach((reference) => {
+          const article = document.createElement('article');
+          article.className = 'reference-card';
+          article.innerHTML = `
+            <div class="badge">${escapeHtml(reference.type)}</div>
+            <h3>${escapeHtml(reference.title)}</h3>
+            <a href="${escapeHtml(reference.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(reference.url)}</a>
+            <p>등록자 ${escapeHtml(reference.author)}</p>
+            <div class="card-actions">
+              <button class="action-button small" type="button" data-edit-reference>✏️ 수정</button>
+              <button class="action-button small" type="button" data-delete-reference>🗑️ 삭제</button>
+            </div>
+          `;
+          article.querySelector('[data-edit-reference]').addEventListener('click', () => {
+            setReferenceFormMode(reference);
+            document.querySelector('#referenceModal').showModal();
+          });
+          article.querySelector('[data-delete-reference]').addEventListener('click', () => {
+            if (!confirm('정말 삭제할까요? 🦕')) {
+              return;
+            }
+            const monthData = getMonthData();
+            monthData.references = monthData.references.filter((item) => item.id !== reference.id);
+            saveData();
+            renderReferences();
+          });
+          grid.append(article);
+        });
+      }
+
+      function renderQuotes() {
+        const list = document.querySelector('#quoteList');
+        const quotes = getMonthData().quotes;
+        list.innerHTML = quotes.length ? '' : '<p class="empty">아직 나눈 구절이 없어요.</p>';
+
+        quotes.forEach((quote) => {
+          quote.comments ||= [];
+
+          const article = document.createElement('article');
+          article.className = 'quote-card';
+          article.innerHTML = `
+            <blockquote>${escapeHtml(quote.text)}</blockquote>
+            <div class="quote-meta">
+              <span>p.${escapeHtml(quote.page)}</span>
+              <span>${escapeHtml(quote.author)}</span>
+              <span>${escapeHtml(quote.date)}</span>
+            </div>
+            <div class="card-actions">
+              <button class="action-button small" type="button" data-edit-quote>✏️ 수정</button>
+              <button class="action-button small" type="button" data-delete-quote>🗑️ 삭제</button>
+            </div>
+            <button class="comment-toggle" type="button">💬 댓글 ${quote.comments.length}개</button>
+            <div class="comments" hidden>
+              <div class="comment-list">
+                ${quote.comments.map((comment) => `
+                  <article class="comment">
+                    <img class="dino dino-comment" src="images/dino3.jpg" alt="">
+                    <div>
+                      <strong>${escapeHtml(comment.author)}</strong>
+                      <p>${escapeHtml(comment.text)}</p>
+                      <small>${escapeHtml(comment.date)}</small>
+                    </div>
+                    <button class="action-button small" type="button" data-delete-comment="${escapeHtml(comment.id)}">🗑️</button>
+                  </article>
+                `).join('') || '<p class="empty small">첫 댓글을 기다려요.</p>'}
+              </div>
+              <form class="comment-form">
+                <input name="author" required placeholder="이름">
+                <input name="text" required placeholder="댓글 내용">
+                <button class="action-button small" type="submit">등록</button>
+              </form>
+            </div>
+          `;
+
+          const comments = article.querySelector('.comments');
+          article.querySelector('.comment-toggle').addEventListener('click', () => {
+            comments.hidden = !comments.hidden;
+          });
+
+          article.querySelector('[data-edit-quote]').addEventListener('click', () => {
+            setQuoteFormMode(quote);
+            document.querySelector('#quoteModal').showModal();
+          });
+
+          article.querySelector('[data-delete-quote]').addEventListener('click', () => {
+            if (!confirm('정말 삭제할까요? 🦕')) {
+              return;
+            }
+            const monthData = getMonthData();
+            monthData.quotes = monthData.quotes.filter((item) => item.id !== quote.id);
+            saveData();
+            renderQuotes();
+          });
+
+          article.querySelectorAll('[data-delete-comment]').forEach((button) => {
+            button.addEventListener('click', () => {
+              if (!confirm('정말 삭제할까요? 🦕')) {
+                return;
+              }
+              quote.comments = quote.comments.filter((comment) => comment.id !== button.dataset.deleteComment);
+              saveData();
+              renderQuotes();
+            });
+          });
+
+          article.querySelector('.comment-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            quote.comments.push({
+              id: crypto.randomUUID(),
+              author: formData.get('author'),
+              text: formData.get('text'),
+              date: today()
+            });
+            saveData();
+            renderQuotes();
+          });
+
+          list.append(article);
+        });
+      }
+
+      function render() {
+        renderMonthTabs();
+        renderBook();
+        renderReferences();
+        renderQuotes();
+      }
+
+      document.querySelectorAll('[data-open-modal]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const modal = document.querySelector(`#${button.dataset.openModal}`);
+          if (modal.id === 'bookModal') {
+            fillForm(document.querySelector('#bookForm'), getMonthData().book);
+          } else if (modal.id === 'referenceModal') {
+            setReferenceFormMode();
+          } else if (modal.id === 'quoteModal') {
+            setQuoteFormMode();
+          }
+          modal.showModal();
+        });
+      });
+
+      document.querySelectorAll('[data-close-modal]').forEach((button) => {
+        button.addEventListener('click', () => button.closest('dialog').close());
+      });
+
+      document.querySelector('#bookForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        getMonthData().book = Object.fromEntries(new FormData(event.currentTarget).entries());
+        saveData();
+        event.currentTarget.closest('dialog').close();
+        renderBook();
+      });
+
+      document.querySelector('#referenceForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formValues = Object.fromEntries(new FormData(event.currentTarget).entries());
+        if (editingReferenceId) {
+          const reference = getMonthData().references.find((item) => item.id === editingReferenceId);
+          Object.assign(reference, formValues);
+        } else {
+          getMonthData().references.unshift({
+            id: crypto.randomUUID(),
+            ...formValues
+          });
+        }
+        saveData();
+        editingReferenceId = null;
+        event.currentTarget.reset();
+        event.currentTarget.closest('dialog').close();
+        renderReferences();
+      });
+
+      document.querySelector('#quoteForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        if (editingQuoteId) {
+          const quote = getMonthData().quotes.find((item) => item.id === editingQuoteId);
+          Object.assign(quote, {
+            text: formData.get('text'),
+            page: formData.get('page'),
+            author: formData.get('author')
+          });
+        } else {
+          getMonthData().quotes.unshift({
+            id: crypto.randomUUID(),
+            text: formData.get('text'),
+            page: formData.get('page'),
+            author: formData.get('author'),
+            date: today(),
+            comments: []
+          });
+        }
+        saveData();
+        editingQuoteId = null;
+        event.currentTarget.reset();
+        event.currentTarget.closest('dialog').close();
+        renderQuotes();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
