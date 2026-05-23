@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>비북스 독서 챌린지</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>🦕 공룡 에이트</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --green:  #1a4a2e;
-      --green2: #255c3a;
-      --accent: #3aaa6a;
-      --bg:     #f7f8f5;
+      --green:  #3d6b52;
+      --green2: #4e8466;
+      --accent: #6aaa84;
+      --egg:    #f5e97a;
+      --bg:     #f5f7f3;
+      --cream:  #faf9f5;
       --white:  #ffffff;
-      --text:   #1c2b22;
-      --muted:  #6b7c72;
-      --border: #dce5de;
+      --text:   #2d3a30;
+      --muted:  #7a9080;
+      --border: #dde8e1;
       --t-bang:  #f59e0b;
       --t-q:     #3b82f6;
       --t-quote: #8b5cf6;
@@ -33,57 +35,12 @@
     }
 
     /* ── 화면 ─────────────────────────────── */
-    .screen { display: none; min-height: 100vh; padding-bottom: 72px; }
+    .screen { display: none; min-height: 100vh; padding-bottom: 76px; }
     .screen.on { display: block; }
-
-    /* ── 로그인 ───────────────────────────── */
-    #loginScreen {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      min-height: 100vh; padding: 32px 24px;
-      background: var(--green);
-    }
-    .login-logo { text-align: center; margin-bottom: 36px; }
-    .login-logo .em { font-size: 52px; display: block; margin-bottom: 10px; }
-    .login-logo h1 {
-      font-family: 'Noto Serif KR', serif;
-      font-size: 24px; color: white; margin-bottom: 6px;
-    }
-    .login-logo p { font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.6; }
-    .login-box { width: 100%; background: white; border-radius: 16px; padding: 28px 22px; }
-
-    /* ── 공통 폼 ──────────────────────────── */
-    .fg { margin-bottom: 13px; }
-    .fg label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
-    .fg input, .fg textarea, .fg select {
-      width: 100%; padding: 11px 13px;
-      border: 1px solid var(--border); border-radius: 8px;
-      font-size: 15px; font-family: inherit; color: var(--text);
-      outline: none; transition: border-color .15s; background: white;
-    }
-    .fg input:focus, .fg textarea:focus { border-color: var(--accent); }
-    .fg textarea { resize: vertical; min-height: 80px; line-height: 1.7; }
-
-    /* ── 버튼 ─────────────────────────────── */
-    .btn {
-      width: 100%; padding: 13px; border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 700; cursor: pointer;
-      font-family: inherit; transition: opacity .15s;
-    }
-    .btn:hover { opacity: .87; }
-    .btn:disabled { opacity: .55; cursor: not-allowed; }
-    .btn-green  { background: var(--green); color: white; }
-    .btn-ghost  { background: white; color: var(--text); border: 1px solid var(--border); }
-    .btn-sm     { padding: 8px 14px; font-size: 13px; width: auto; }
-    .text-btn {
-      background: none; border: none; color: var(--accent);
-      font-size: 13px; cursor: pointer; font-family: inherit;
-      padding: 10px 0; text-align: center; width: 100%; display: block;
-    }
 
     /* ── 탑바 ─────────────────────────────── */
     .topbar {
-      position: sticky; top: 0; background: white;
+      position: sticky; top: 0; background: var(--white);
       border-bottom: 1px solid var(--border);
       padding: 13px 18px;
       display: flex; align-items: center; justify-content: space-between;
@@ -91,15 +48,14 @@
     }
     .topbar-title {
       font-family: 'Noto Serif KR', serif;
-      font-size: 17px; font-weight: 700; color: var(--green);
+      font-size: 18px; font-weight: 700; color: var(--green);
     }
-    .topbar-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
 
     /* ── 하단 네비 ────────────────────────── */
     .bottom-nav {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 480px;
-      background: white; border-top: 1px solid var(--border);
+      background: var(--white); border-top: 1px solid var(--border);
       display: flex; z-index: 100;
     }
     .nav-item {
@@ -109,39 +65,58 @@
       font-family: inherit; gap: 3px; color: var(--muted); transition: color .15s;
     }
     .nav-item.active { color: var(--green); }
-    .nav-item .ni { font-size: 22px; }
+    .nav-item .ni { font-size: 20px; }
     .nav-item .nl { font-size: 10px; font-weight: 700; }
     .nav-add {
       flex: 1; display: flex; align-items: center;
       justify-content: center; border: none; background: none; cursor: pointer; padding: 8px;
     }
-    .nav-add .add-c {
+    .add-c {
       width: 46px; height: 46px;
       background: var(--green); border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 26px; color: white; margin-top: -16px;
-      box-shadow: 0 4px 18px rgba(26,74,46,.35);
+      font-size: 22px; color: white; margin-top: -16px;
+      box-shadow: 0 4px 18px rgba(61,107,82,.4);
     }
 
     /* ── 카드 ─────────────────────────────── */
     .card {
-      background: white; border-radius: 14px;
+      background: var(--white); border-radius: 16px;
       border: 1px solid var(--border); padding: 18px; margin-bottom: 12px;
     }
     .sp { padding: 16px; }
 
-    /* ── 진행바 ───────────────────────────── */
-    .pbar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-top: 8px; }
-    .pfill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .4s ease; }
+    /* ── 폼 ──────────────────────────────── */
+    .fg { margin-bottom: 13px; }
+    .fg label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+    .fg input, .fg textarea, .fg select {
+      width: 100%; padding: 11px 13px;
+      border: 1px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-family: inherit; color: var(--text);
+      outline: none; transition: border-color .15s; background: var(--white);
+    }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color: var(--accent); }
+    .fg textarea { resize: vertical; min-height: 80px; line-height: 1.7; }
+
+    /* ── 버튼 ─────────────────────────────── */
+    .btn {
+      width: 100%; padding: 13px; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-ghost { background: white; color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 7px 13px; font-size: 12px; width: auto; border-radius: 8px; }
 
     /* ── 태그 ─────────────────────────────── */
-    .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .tag-row { display: flex; gap: 7px; flex-wrap: wrap; }
     .tag {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 6px 13px; border-radius: 20px; font-size: 13px; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
       cursor: pointer; border: 2px solid var(--border);
-      background: var(--bg); color: var(--muted); transition: all .15s;
-      font-family: inherit;
+      background: var(--bg); color: var(--muted); transition: all .15s; font-family: inherit;
     }
     .tag.sel { color: white; border-color: transparent; }
     .tag.sel.tb { background: var(--t-bang); }
@@ -149,29 +124,70 @@
     .tag.sel.tqt { background: var(--t-quote); }
     .tag.sel.ta { background: var(--t-apply); }
     .pill {
-      display: inline-flex; align-items: center; gap: 3px;
-      padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; color: white;
+      display: inline-flex; align-items: center; gap: 2px;
+      padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; color: white;
     }
     .pb { background: var(--t-bang); }
     .pq { background: var(--t-q); }
     .pqt { background: var(--t-quote); }
     .pa { background: var(--t-apply); }
 
-    /* ── 피드 카드 ────────────────────────── */
+    /* ── D-day 카드 ───────────────────────── */
+    .dday-card {
+      background: var(--green); color: white;
+      border-radius: 16px; padding: 20px;
+      margin-bottom: 12px; position: relative; overflow: hidden;
+    }
+    .dday-dino { position: absolute; right: 16px; bottom: 0; font-size: 52px; opacity: .25; }
+    .dday-label { font-size: 12px; opacity: .75; margin-bottom: 4px; }
+    .dday-num { font-family: 'Noto Serif KR', serif; font-size: 44px; font-weight: 700; line-height: 1; }
+    .dday-date { font-size: 13px; opacity: .8; margin-top: 6px; }
+
+    /* ── 책 카드 ──────────────────────────── */
+    .book-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 16px; padding: 18px; margin-bottom: 12px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .book-cover {
+      width: 68px; height: 96px; object-fit: cover;
+      border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0;
+      background: var(--bg);
+    }
+    .book-cover-ph {
+      width: 68px; height: 96px; border-radius: 6px;
+      border: 1px solid var(--border); flex-shrink: 0;
+      background: var(--bg); display: flex; align-items: center;
+      justify-content: center; font-size: 28px;
+    }
+    .book-title { font-family: 'Noto Serif KR', serif; font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .book-author { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    .book-meta { font-size: 12px; color: var(--muted); }
+
+    /* ── 한마디 ───────────────────────────── */
+    .oneliner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .oneliner-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px;
+    }
+    .ol-name { font-size: 11px; font-weight: 700; color: var(--green); margin-bottom: 5px; }
+    .ol-text { font-size: 12px; color: var(--text); line-height: 1.65; }
+    .ol-empty { font-size: 11px; color: var(--muted); font-style: italic; }
+
+    /* ── 구절 카드 ────────────────────────── */
     .sc {
-      background: white; border: 1px solid var(--border);
-      border-radius: 14px; padding: 18px; margin-bottom: 12px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 16px; padding: 18px; margin-bottom: 12px;
     }
     .sc-hd { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .avatar {
-      width: 36px; height: 36px; background: var(--green);
+      width: 34px; height: 34px; background: var(--green);
       border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; color: white; font-size: 14px;
+      justify-content: center; color: white; font-size: 13px;
       font-weight: 700; flex-shrink: 0;
     }
-    .av-lg { width: 40px; height: 40px; font-size: 15px; }
     .sc-name { font-size: 13px; font-weight: 700; color: var(--green); }
-    .sc-book { font-size: 11px; color: var(--muted); }
+    .sc-date { font-size: 11px; color: var(--muted); }
     .sc-sent {
       font-family: 'Noto Serif KR', serif; font-size: 15px;
       line-height: 1.85; color: var(--text);
@@ -179,21 +195,45 @@
       padding-left: 13px; margin-bottom: 8px;
     }
     .sc-pg { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .sc-ft { display: flex; align-items: center; justify-content: space-between; }
     .cmt-btn {
       background: none; border: none; font-size: 12px;
       color: var(--muted); cursor: pointer; font-family: inherit;
-      display: inline-flex; align-items: center; gap: 4px;
+    }
+
+    /* ── 레퍼런스 ─────────────────────────── */
+    .ref-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 15px 16px; margin-bottom: 10px;
+      display: flex; gap: 12px; align-items: flex-start;
+      text-decoration: none; color: inherit;
+    }
+    .ref-type { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .ref-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 3px; }
+    .ref-meta { font-size: 11px; color: var(--muted); }
+
+    /* ── 아카이브 ─────────────────────────── */
+    .arch-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 15px 16px; margin-bottom: 10px;
+      display: flex; gap: 12px; align-items: center;
+    }
+    .arch-month {
+      background: var(--green); color: white;
+      border-radius: 8px; padding: 6px 10px;
+      font-size: 12px; font-weight: 700; text-align: center;
+      flex-shrink: 0; min-width: 48px;
     }
 
     /* ── 모달 (바텀시트) ──────────────────── */
     .ov {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.5); z-index: 200;
+      background: rgba(0,0,0,.45); z-index: 200;
       align-items: flex-end; justify-content: center;
     }
     .ov.on { display: flex; }
     .msheet {
-      background: white; border-radius: 20px 20px 0 0;
+      background: var(--white); border-radius: 20px 20px 0 0;
       padding: 20px; width: 100%; max-width: 480px;
       max-height: 90vh; overflow-y: auto;
       animation: slideUp .25s ease;
@@ -203,11 +243,10 @@
     .mtitle { font-family: 'Noto Serif KR', serif; font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 16px; }
 
     /* ── 댓글 ─────────────────────────────── */
-    .cmt { padding: 11px 0; border-bottom: 1px solid var(--border); }
-    .cmt:last-child { border-bottom: none; }
+    .cmt-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .cmt-item:last-child { border-bottom: none; }
     .cmt-author { font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 3px; }
-    .cmt-text { font-size: 13px; line-height: 1.65; }
-    .cmt-time { font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .cmt-text { font-size: 13px; line-height: 1.6; }
     .cmt-irow { display: flex; gap: 8px; margin-top: 12px; }
     .cmt-irow input {
       flex: 1; padding: 10px 13px;
@@ -221,188 +260,84 @@
       font-size: 16px; cursor: pointer; flex-shrink: 0;
     }
 
-    /* ── 멤버카드 ─────────────────────────── */
-    .mc { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin-bottom: 10px; }
-    .mc-hd { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-    .mc-name { font-size: 15px; font-weight: 700; color: var(--green); }
-    .mc-book { font-size: 12px; color: var(--muted); }
-
     /* ── 기타 ─────────────────────────────── */
     .empty { text-align: center; padding: 48px 24px; color: var(--muted); }
     .ei { font-size: 40px; margin-bottom: 12px; }
     .alert { padding: 10px 13px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
     .ae { background: #fee2e2; color: #991b1b; }
     .ao { background: #dcfce7; color: #166534; }
-    .badge {
-      display: inline-block; background: var(--green); color: white;
-      border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700;
-    }
-    .cert-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 0; border-bottom: 1px solid var(--border);
-    }
-    .cert-row:last-child { border-bottom: none; }
     .spin {
       display: inline-block; width: 13px; height: 13px;
       border: 2px solid rgba(255,255,255,.3); border-top-color: white;
-      border-radius: 50%; animation: rot .6s linear infinite;
-      vertical-align: middle; margin-right: 4px;
+      border-radius: 50%; animation: rot .6s linear infinite; vertical-align: middle; margin-right: 4px;
     }
     @keyframes rot { to { transform: rotate(360deg); } }
+    .section-label { font-size: 13px; font-weight: 700; color: var(--green); margin: 4px 0 10px; }
+    .btn-row { display: flex; gap: 8px; }
+    .btn-row .btn { flex: 1; }
   </style>
 </head>
 <body>
 
-<!-- ══════ 로그인 ══════ -->
-<div id="loginScreen">
-  <div class="login-logo">
-    <span class="em">📚</span>
-    <h1>비북스 독서 챌린지</h1>
-    <p>매일 30페이지<br>한 달에 책 두 권, 리뷰 두 개</p>
-  </div>
-  <div class="login-box">
-    <div id="loginAlert"></div>
-
-    <div id="loginForm">
-      <div class="fg"><label>이름</label>
-        <input id="lName" type="text" placeholder="이름 입력" /></div>
-      <div class="fg"><label>비밀번호</label>
-        <input id="lPw" type="password" placeholder="비밀번호 입력"
-          onkeydown="if(event.key==='Enter')doLogin()" /></div>
-      <button class="btn btn-green" id="loginBtn" onclick="doLogin()">로그인</button>
-      <button class="text-btn" onclick="showSignup()">처음이세요? 멤버 신청하기 →</button>
-    </div>
-
-    <div id="signupForm" style="display:none">
-      <div class="fg"><label>이름</label>
-        <input id="sName" type="text" placeholder="이름 입력" /></div>
-      <div class="fg"><label>비밀번호</label>
-        <input id="sPw" type="password" placeholder="비밀번호 설정 (4자리 이상)" /></div>
-      <div class="fg"><label>읽을 책 제목 <span style="font-weight:400;color:var(--muted)">(나중에 등록 가능)</span></label>
-        <input id="sBook" type="text" placeholder="읽을 책 제목" /></div>
-      <button class="btn btn-green" id="signupBtn" onclick="doSignup()">멤버 신청하기</button>
-      <button class="text-btn" onclick="showLogin()">← 이미 멤버라면? 로그인</button>
-    </div>
-  </div>
-</div>
-
 <!-- ══════ 앱 ══════ -->
-<div id="appWrap" style="display:none">
+<div id="appWrap">
 
   <!-- ── 홈 ── -->
   <div class="screen on" id="scHome">
     <div class="topbar">
-      <div>
-        <div class="topbar-title">📚 비북스 챌린지</div>
-        <div class="topbar-sub" id="homeGreet"></div>
+      <div class="topbar-title">🦕 공룡 에이트</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="openOv('meetingOv')">📅 모임 설정</button>
+        <button class="btn btn-ghost btn-sm" onclick="openOv('bookOv')">📖 책 설정</button>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">로그아웃</button>
     </div>
     <div class="sp">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-          <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:3px">내 책</div>
-            <div style="font-size:15px;font-weight:700;color:var(--green)" id="homeBook">책을 등록해주세요</div>
-          </div>
-          <span id="todayBadge"></span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:12px">
-          <div>
-            <div style="font-size:22px;font-weight:700;color:var(--green)" id="hTotal">0</div>
-            <div style="font-size:10px;color:var(--muted)">누계 페이지</div>
-          </div>
-          <div>
-            <div style="font-size:22px;font-weight:700;color:var(--green)" id="hDays">0</div>
-            <div style="font-size:10px;color:var(--muted)">인증 일수</div>
-          </div>
-          <div>
-            <div style="font-size:22px;font-weight:700;color:var(--accent)" id="hPct">0%</div>
-            <div style="font-size:10px;color:var(--muted)">진행률</div>
-          </div>
-        </div>
-        <div class="pbar"><div class="pfill" id="hBar" style="width:0%"></div></div>
+      <!-- D-day -->
+      <div class="dday-card" id="ddayCard">
+        <div class="dday-dino">🦕</div>
+        <div class="dday-label">다음 모임까지</div>
+        <div class="dday-num" id="ddayNum">-</div>
+        <div class="dday-date" id="ddayDate">모임 날짜를 설정해주세요</div>
       </div>
 
-      <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px">오늘의 인증 현황</div>
-      <div id="todayList"></div>
+      <!-- 이달의 책 -->
+      <div class="section-label">📚 이달의 책</div>
+      <div id="bookArea">
+        <div class="card" style="text-align:center;color:var(--muted);font-size:14px;padding:24px">
+          🦕 책을 설정해주세요
+        </div>
+      </div>
+
+      <!-- 이달의 한마디 -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="section-label" style="margin:0">💬 이달의 한마디</div>
+        <button class="btn btn-ghost btn-sm" onclick="openOnelineModal()">+ 한마디 남기기</button>
+      </div>
+      <div class="oneliner-grid" id="onelineGrid"></div>
     </div>
   </div>
 
-  <!-- ── 피드 ── -->
-  <div class="screen" id="scFeed">
-    <div class="topbar"><div class="topbar-title">💬 문장 피드</div></div>
-    <div class="sp" id="feedList">
-      <div class="empty"><div class="ei">💬</div>아직 공유된 문장이 없어요</div>
+  <!-- ── 구절 ── -->
+  <div class="screen" id="scSent">
+    <div class="topbar"><div class="topbar-title">💬 구절 나누기</div></div>
+    <div class="sp" id="sentList">
+      <div class="empty"><div class="ei">🦕</div>아직 공유된 구절이 없어요</div>
     </div>
   </div>
 
-  <!-- ── 인증 ── -->
-  <div class="screen" id="scCert">
-    <div class="topbar"><div class="topbar-title">✅ 오늘 인증</div></div>
-    <div class="sp">
-      <div id="certAlert"></div>
-      <div class="card">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:3px" id="certDate"></div>
-        <div style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:16px" id="certBook">책을 먼저 등록해주세요</div>
-        <div class="fg"><label>오늘 읽은 페이지 수</label>
-          <input type="number" id="certPages" placeholder="예: 30" min="1" /></div>
-        <div class="fg"><label>한마디 <span style="font-weight:400;color:var(--muted)">(선택)</span></label>
-          <input type="text" id="certMemo" placeholder="오늘 독서 한마디" /></div>
-        <button class="btn btn-green" id="certBtn" onclick="submitCert()">인증하기 ✅</button>
-      </div>
-      <div style="font-size:13px;font-weight:700;color:var(--green);margin:4px 0 10px">최근 인증 내역</div>
-      <div class="card" id="certHist"></div>
+  <!-- ── 레퍼런스 ── -->
+  <div class="screen" id="scRef">
+    <div class="topbar"><div class="topbar-title">📎 레퍼런스</div></div>
+    <div class="sp" id="refList">
+      <div class="empty"><div class="ei">📎</div>아직 레퍼런스가 없어요</div>
     </div>
   </div>
 
-  <!-- ── 멤버 ── -->
-  <div class="screen" id="scMembers">
-    <div class="topbar"><div class="topbar-title">👥 멤버</div></div>
-    <div class="sp" id="memberList"></div>
-  </div>
-
-  <!-- ── 내 책 ── -->
-  <div class="screen" id="scMyBook">
-    <div class="topbar"><div class="topbar-title">📖 내 책</div></div>
-    <div class="sp">
-      <div id="bookAlert"></div>
-
-      <div id="bookView" style="display:none">
-        <div class="card">
-          <div style="display:flex;gap:14px;align-items:flex-start">
-            <img id="bkCoverImg" src="" alt="표지"
-              style="width:68px;height:98px;object-fit:cover;border-radius:6px;border:1px solid var(--border);flex-shrink:0"
-              onerror="this.style.display='none'" />
-            <div style="flex:1">
-              <div style="font-size:17px;font-weight:700;color:var(--green);margin-bottom:4px" id="bkTitle"></div>
-              <div style="font-size:13px;color:var(--muted);margin-bottom:8px" id="bkAuthor"></div>
-              <div style="font-size:12px;color:var(--muted)">총 <strong id="bkPages" style="color:var(--green)"></strong>페이지</div>
-            </div>
-          </div>
-        </div>
-        <div class="card" id="bkTocCard" style="display:none">
-          <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px">목차 / 서문</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.85;white-space:pre-wrap" id="bkTocTxt"></div>
-        </div>
-        <button class="btn btn-ghost" onclick="showBookForm()">책 정보 수정</button>
-      </div>
-
-      <div id="bookForm">
-        <div class="card">
-          <div class="fg"><label>책 제목 *</label>
-            <input id="bTitle" type="text" placeholder="책 제목" /></div>
-          <div class="fg"><label>저자</label>
-            <input id="bAuthor" type="text" placeholder="저자명" /></div>
-          <div class="fg"><label>총 페이지 수 *</label>
-            <input id="bPages" type="number" placeholder="예: 300" min="1" /></div>
-          <div class="fg"><label>표지 이미지 URL <span style="font-weight:400;color:var(--muted)">(선택)</span></label>
-            <input id="bCover" type="url" placeholder="https://..." /></div>
-          <div class="fg"><label>목차 / 서문 <span style="font-weight:400;color:var(--muted)">(선택)</span></label>
-            <textarea id="bToc" placeholder="목차나 서문을 자유롭게 입력해주세요" rows="5"></textarea></div>
-          <button class="btn btn-green" id="bookSaveBtn" onclick="saveBook()">책 등록하기</button>
-        </div>
-      </div>
+  <!-- ── 아카이브 ── -->
+  <div class="screen" id="scArch">
+    <div class="topbar"><div class="topbar-title">📚 아카이브</div></div>
+    <div class="sp" id="archList">
+      <div class="empty"><div class="ei">📚</div>아직 아카이브가 없어요</div>
     </div>
   </div>
 
@@ -411,43 +346,138 @@
     <button class="nav-item active" data-sc="Home" onclick="goTab('Home')">
       <span class="ni">🏠</span><span class="nl">홈</span>
     </button>
-    <button class="nav-item" data-sc="Feed" onclick="goTab('Feed')">
-      <span class="ni">💬</span><span class="nl">피드</span>
+    <button class="nav-item" data-sc="Sent" onclick="goTab('Sent')">
+      <span class="ni">💬</span><span class="nl">구절</span>
     </button>
-    <button class="nav-add" onclick="openSentModal()">
-      <div class="add-c">+</div>
+    <button class="nav-add" onclick="openFAB()">
+      <div class="add-c">🦕</div>
     </button>
-    <button class="nav-item" data-sc="Cert" onclick="goTab('Cert')">
-      <span class="ni">✅</span><span class="nl">인증</span>
+    <button class="nav-item" data-sc="Ref" onclick="goTab('Ref')">
+      <span class="ni">📎</span><span class="nl">레퍼런스</span>
     </button>
-    <button class="nav-item" data-sc="MyBook" onclick="goTab('MyBook')">
-      <span class="ni">📖</span><span class="nl">내 책</span>
+    <button class="nav-item" data-sc="Arch" onclick="goTab('Arch')">
+      <span class="ni">📚</span><span class="nl">아카이브</span>
     </button>
   </nav>
 </div>
 
-<!-- ══════ 모달: 문장 올리기 ══════ -->
+<!-- ══════ 모달: 책 설정 ══════ -->
+<div class="ov" id="bookOv">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mtitle">📖 이달의 책 설정</div>
+    <div id="bookAlert"></div>
+    <div class="fg"><label>제목 *</label><input id="bkTitle" type="text" placeholder="책 제목"/></div>
+    <div class="fg"><label>저자</label><input id="bkAuthor" type="text" placeholder="저자명"/></div>
+    <div class="fg"><label>출판사</label><input id="bkPub" type="text" placeholder="출판사"/></div>
+    <div class="fg"><label>정가</label><input id="bkPrice" type="text" placeholder="예: 17,000원"/></div>
+    <div class="fg"><label>표지 URL</label><input id="bkCover" type="url" placeholder="https://..."/></div>
+    <div class="fg"><label>책 소개</label><textarea id="bkIntro" placeholder="짧은 소개" rows="3"></textarea></div>
+    <div class="fg"><label>책 정보 링크</label><input id="bkLink" type="url" placeholder="https://..."/></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="closeOv('bookOv')">취소</button>
+      <button class="btn btn-green" id="bookSaveBtn" onclick="saveBook()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 모달: 모임 설정 ══════ -->
+<div class="ov" id="meetingOv">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mtitle">📅 다음 모임 설정</div>
+    <div id="meetingAlert"></div>
+    <div class="fg"><label>모임 날짜</label><input id="mtDate" type="date"/></div>
+    <div class="fg"><label>장소 (선택)</label><input id="mtLoc" type="text" placeholder="장소 입력"/></div>
+    <div class="fg"><label>메모 (선택)</label><input id="mtNote" type="text" placeholder="메모"/></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="closeOv('meetingOv')">취소</button>
+      <button class="btn btn-green" id="meetingSaveBtn" onclick="saveMeeting()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 모달: 한마디 ══════ -->
+<div class="ov" id="onelineOv">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mtitle">💬 이달의 한마디</div>
+    <div id="olAlert"></div>
+    <div class="fg"><label>이름</label>
+      <select id="olName"><option value="">이름 선택</option></select></div>
+    <div class="fg"><label>한마디</label>
+      <textarea id="olText" placeholder="이번 달 책에 대한 한마디를 남겨주세요" rows="3"></textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="closeOv('onelineOv')">취소</button>
+      <button class="btn btn-green" id="olBtn" onclick="submitOneline()">등록</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 모달: 구절 올리기 ══════ -->
 <div class="ov" id="sentOv">
   <div class="msheet">
     <div class="mhandle"></div>
-    <div class="mtitle">문장 올리기</div>
+    <div class="mtitle">🦕 구절 올리기</div>
     <div id="sentAlert"></div>
-    <div class="fg"><label>인상 깊은 문장</label>
-      <textarea id="stxt" rows="4" placeholder="책에서 마음에 걸린 문장을 적어주세요"></textarea></div>
+    <div class="fg"><label>이름</label>
+      <select id="stName"><option value="">이름 선택</option></select></div>
+    <div class="fg"><label>구절</label>
+      <textarea id="stText" placeholder="마음에 걸린 문장을 적어주세요" rows="4"></textarea></div>
     <div class="fg"><label>페이지</label>
-      <input type="number" id="spg" placeholder="예: 47" /></div>
+      <input type="number" id="stPage" placeholder="예: 47"/></div>
     <div class="fg">
-      <label>태그 <span style="font-weight:400;color:var(--muted)">(복수 선택 가능)</span></label>
-      <div class="tag-row">
+      <label>태그 (복수 선택 가능)</label>
+      <div class="tag-row" style="margin-top:6px">
         <button class="tag tb" data-t="!" onclick="toggleTag(this)">❗ 느낌표</button>
         <button class="tag tq" data-t="?" onclick="toggleTag(this)">❓ 물음표</button>
         <button class="tag tqt" data-t='"' onclick="toggleTag(this)">💬 인용</button>
-        <button class="tag ta"  data-t="@" onclick="toggleTag(this)">✨ 적용</button>
+        <button class="tag ta" data-t="@" onclick="toggleTag(this)">✨ 적용</button>
       </div>
     </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeOv('sentOv')">취소</button>
-      <button class="btn btn-green" style="flex:2" id="sentBtn" onclick="submitSent()">올리기</button>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="closeOv('sentOv')">취소</button>
+      <button class="btn btn-green" id="sentBtn" onclick="submitSent()">올리기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 모달: 레퍼런스 ══════ -->
+<div class="ov" id="refOv">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mtitle">📎 레퍼런스 추가</div>
+    <div id="refAlert"></div>
+    <div class="fg"><label>이름</label>
+      <select id="rfName"><option value="">이름 선택</option></select></div>
+    <div class="fg"><label>제목</label>
+      <input id="rfTitle" type="text" placeholder="제목 입력"/></div>
+    <div class="fg"><label>URL</label>
+      <input id="rfUrl" type="url" placeholder="https://..."/></div>
+    <div class="fg"><label>종류</label>
+      <select id="rfType">
+        <option value="유튜브🎬">유튜브 🎬</option>
+        <option value="기사📰">기사 📰</option>
+        <option value="블로그✍️">블로그 ✍️</option>
+        <option value="기타🔗">기타 🔗</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="closeOv('refOv')">취소</button>
+      <button class="btn btn-green" id="refBtn" onclick="submitRef()">추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 모달: FAB 선택 ══════ -->
+<div class="ov" id="fabOv">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mtitle">무엇을 올릴까요? 🦕</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-green" onclick="closeOv('fabOv');openOv('sentOv')">💬 구절 올리기</button>
+      <button class="btn btn-ghost" onclick="closeOv('fabOv');openOv('refOv')">📎 레퍼런스 추가</button>
+      <button class="btn btn-ghost" onclick="closeOv('fabOv')">취소</button>
     </div>
   </div>
 </div>
@@ -456,29 +486,46 @@
 <div class="ov" id="cmtOv">
   <div class="msheet">
     <div class="mhandle"></div>
-    <div id="cmtSentPrev" style="font-family:'Noto Serif KR',serif;font-size:14px;line-height:1.85;color:var(--text);border-left:3px solid var(--accent);padding-left:13px;margin-bottom:16px"></div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <div id="cmtList" style="padding:4px 16px"></div>
+    <div id="cmtPrev" style="font-family:'Noto Serif KR',serif;font-size:14px;line-height:1.85;color:var(--text);border-left:3px solid var(--accent);padding-left:13px;margin-bottom:16px"></div>
+    <div class="card" style="padding:4px 16px;margin-bottom:0">
+      <div id="cmtList"></div>
     </div>
     <div class="cmt-irow">
-      <input type="text" id="cmtInput" placeholder="댓글을 입력하세요"
-        onkeydown="if(event.key==='Enter')submitCmt()" />
+      <input type="text" id="cmtInput" placeholder="댓글 입력 (이름: 내용)"
+        onkeydown="if(event.key==='Enter')submitCmt()"/>
       <button class="cmt-send" onclick="submitCmt()">↑</button>
     </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:6px;text-align:center">예: 박용희: 저도 이 부분이 좋았어요!</div>
   </div>
 </div>
 
 <script>
 // ══════════════════════════════════════════
-//  ⚙️ 설정 — Apps Script 배포 후 URL 입력
+//  ⚙️ 설정
 // ══════════════════════════════════════════
-const API = 'https://script.google.com/macros/s/AKfycbxQoAZuyEmpzfg59ueomJkof0fXBxl-5sPGV-j12AhpqyppiRn7wsH4KJyJ3k7BnerD0g/exec';
+const API = 'https://script.google.com/macros/s/AKfycbzsHOZi_glahWBrBH8g71Gpj9EVgTEEjQlpSrK4P6Psc6RZ-nerB0dw_kPWLmQP5QC6/exec'; // ← Apps Script URL 입력
+
+const MEMBERS = ['박용희','강지혜','김양우','남우현','서수정','이정은','최별님','Ellory Park'];
 
 // ══════════════════════════════════════════
 //  상태
 // ══════════════════════════════════════════
-let U = null, myBook = null;
-let selTags = [], curSentId = null;
+let selTags = [], curSentId = null, curTab = 'Home';
+
+// ══════════════════════════════════════════
+//  초기화
+// ══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  fillSelects();
+  await loadHome();
+});
+
+function fillSelects() {
+  ['olName','stName','rfName'].forEach(id => {
+    const sel = q(`#${id}`);
+    MEMBERS.forEach(m => { sel.innerHTML += `<option value="${m}">${m}</option>`; });
+  });
+}
 
 // ══════════════════════════════════════════
 //  API
@@ -486,149 +533,133 @@ let selTags = [], curSentId = null;
 async function GET(action, p = {}) {
   const url = new URL(API);
   url.searchParams.set('action', action);
-  Object.entries(p).forEach(([k, v]) => url.searchParams.set(k, v));
-  const r = await fetch(url.toString(), { redirect: 'follow' });
+  Object.entries(p).forEach(([k,v]) => url.searchParams.set(k, v));
+  const r = await fetch(url.toString(), { redirect:'follow' });
   return r.json();
 }
 async function POST(data) {
   const r = await fetch(API, {
-    method: 'POST', redirect: 'follow',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    method:'POST', redirect:'follow',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
     body: JSON.stringify(data)
   });
   return r.json();
 }
 
 // ══════════════════════════════════════════
-//  로그인 / 회원가입
-// ══════════════════════════════════════════
-function showSignup() { q('#loginForm').style.display='none'; q('#signupForm').style.display='block'; q('#loginAlert').innerHTML=''; }
-function showLogin()  { q('#signupForm').style.display='none'; q('#loginForm').style.display='block'; q('#loginAlert').innerHTML=''; }
-
-async function doLogin() {
-  const name=q('#lName').value.trim(), pw=q('#lPw').value.trim();
-  if (!name||!pw) { flash('loginAlert','이름과 비밀번호를 입력해주세요.','e'); return; }
-  setLoad('loginBtn', true, '로그인 중...');
-  try {
-    const r = await GET('login', { name, password: pw });
-    if (r.success) { U=r.member; initApp(); }
-    else flash('loginAlert', r.message, 'e');
-  } catch { flash('loginAlert','서버 연결 실패. 잠시 후 다시 시도해주세요.','e'); }
-  finally { setLoad('loginBtn', false, '로그인'); }
-}
-
-async function doSignup() {
-  const name=q('#sName').value.trim(), pw=q('#sPw').value.trim(), book=q('#sBook').value.trim();
-  if (!name||!pw) { flash('loginAlert','이름과 비밀번호를 입력해주세요.','e'); return; }
-  setLoad('signupBtn', true, '신청 중...');
-  try {
-    const r = await POST({ action:'signup', name, password:pw, bookTitle:book });
-    if (r.success) { U=r.member; initApp(); }
-    else flash('loginAlert', r.message, 'e');
-  } catch { flash('loginAlert','서버 연결 실패.','e'); }
-  finally { setLoad('signupBtn', false, '멤버 신청하기'); }
-}
-
-function doLogout() {
-  U=null; myBook=null;
-  q('#loginScreen').style.display='flex';
-  q('#appWrap').style.display='none';
-}
-
-// ══════════════════════════════════════════
-//  초기화
-// ══════════════════════════════════════════
-async function initApp() {
-  q('#loginScreen').style.display='none';
-  q('#appWrap').style.display='block';
-  q('#homeGreet').textContent=`${U.name}님, 오늘도 읽어요 📖`;
-  await loadMyBook();
-  await loadHome();
-}
-
-// ══════════════════════════════════════════
 //  탭 이동
 // ══════════════════════════════════════════
 async function goTab(tab) {
+  curTab = tab;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   q(`#sc${tab}`).classList.add('on');
-  const btn=document.querySelector(`[data-sc="${tab}"]`);
-  if(btn) btn.classList.add('active');
-  if(tab==='Home')    await loadHome();
-  if(tab==='Feed')    await loadFeed();
-  if(tab==='Cert')    { loadCertPage(); await loadCertHist(); }
-  if(tab==='Members') await loadMembers();
-  if(tab==='MyBook')  renderMyBookPage();
+  const btn = document.querySelector(`[data-sc="${tab}"]`);
+  if (btn) btn.classList.add('active');
+  if (tab==='Home')  await loadHome();
+  if (tab==='Sent')  await loadSentences();
+  if (tab==='Ref')   await loadRefs();
+  if (tab==='Arch')  await loadArchive();
 }
 
 // ══════════════════════════════════════════
 //  홈
 // ══════════════════════════════════════════
 async function loadHome() {
-  if (myBook) {
-    q('#homeBook').textContent = myBook.title;
-    const r = await GET('getMyCerts', { memberId: U.memberId });
-    if (r.success) {
-      const total = r.certs.reduce((a,c)=>a+Number(c.todayPages),0);
-      const days  = r.certs.length;
-      const pct   = myBook.totalPages>0 ? Math.min(100,Math.round(total/myBook.totalPages*100)) : 0;
-      q('#hTotal').textContent=total; q('#hDays').textContent=days;
-      q('#hPct').textContent=pct+'%'; q('#hBar').style.width=pct+'%';
-      const today=todayStr();
-      const cert=r.certs.find(c=>c.date===today);
-      q('#todayBadge').innerHTML=cert
-        ? `<span style="font-size:20px">✅</span>`
-        : `<span class="badge">오늘 미인증</span>`;
+  await Promise.all([loadMeeting(), loadBook(), loadOneliners()]);
+}
+
+async function loadMeeting() {
+  const r = await GET('getMeeting');
+  if (r.success && r.meeting) {
+    const m = r.meeting;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const meet  = new Date(m.date); meet.setHours(0,0,0,0);
+    const diff  = Math.round((meet - today) / 86400000);
+    const card  = q('#ddayCard');
+    if (diff > 0) {
+      q('#ddayNum').textContent = 'D-' + diff;
+    } else if (diff === 0) {
+      q('#ddayNum').textContent = 'D-DAY 🎉';
+      card.style.background = '#e67e22';
+    } else {
+      q('#ddayNum').textContent = '모임 완료';
     }
-  }
-  const r2 = await GET('getTodayCerts');
-  const el=q('#todayList');
-  if (r2.success && r2.certs.length) {
-    el.innerHTML=r2.certs.map(c=>`
-      <div class="card" style="padding:13px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px">
-        <div class="avatar">${c.memberName[0]}</div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:var(--green)">${c.memberName}</div>
-          <div style="font-size:11px;color:var(--muted)">${c.bookTitle||''}</div>
-          ${c.memo?`<div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(c.memo)}</div>`:''}
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:18px;font-weight:700;color:var(--accent)">${c.todayPages}p</div>
-        </div>
-      </div>`).join('');
-  } else {
-    el.innerHTML=`<div class="empty" style="padding:24px"><div class="ei" style="font-size:28px">🌅</div><div style="font-size:13px">오늘 첫 인증을 해보세요!</div></div>`;
+    q('#ddayDate').textContent = `${m.date}${m.location?' · '+m.location:''}${m.note?' · '+m.note:''}`;
+    q('#mtDate').value = m.date;
+    q('#mtLoc').value  = m.location || '';
+    q('#mtNote').value = m.note || '';
   }
 }
 
+async function loadBook() {
+  const r = await GET('getBook');
+  const el = q('#bookArea');
+  if (r.success && r.book) {
+    const b = r.book;
+    q('#bkTitle').value  = b.title || '';
+    q('#bkAuthor').value = b.author || '';
+    q('#bkPub').value    = b.publisher || '';
+    q('#bkPrice').value  = b.price || '';
+    q('#bkCover').value  = b.coverUrl || '';
+    q('#bkIntro').value  = b.intro || '';
+    q('#bkLink').value   = b.link || '';
+    el.innerHTML = `
+      <div class="book-card">
+        ${b.coverUrl
+          ? `<img class="book-cover" src="${b.coverUrl}" alt="표지" onerror="this.style.display='none'">`
+          : `<div class="book-cover-ph">🦕</div>`}
+        <div style="flex:1">
+          <div class="book-title">${b.title}</div>
+          <div class="book-author">${b.author||''} ${b.publisher?'· '+b.publisher:''}</div>
+          <div class="book-meta">${b.price||''}</div>
+          ${b.intro?`<div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6">${esc(b.intro)}</div>`:''}
+          ${b.link?`<a href="${b.link}" target="_blank" style="font-size:12px;color:var(--accent);display:inline-block;margin-top:6px">책 정보 더보기 →</a>`:''}
+        </div>
+      </div>`;
+  }
+}
+
+async function loadOneliners() {
+  const r = await GET('getOneliners', { month: thisMonth() });
+  const el = q('#onelineGrid');
+  const map = {};
+  if (r.success) r.oneliners.forEach(o => { map[o.memberName] = o.comment; });
+  el.innerHTML = MEMBERS.map(m => `
+    <div class="oneliner-card">
+      <div class="ol-name">${m}</div>
+      ${map[m]
+        ? `<div class="ol-text">${esc(map[m])}</div>`
+        : `<div class="ol-empty">아직 한마디 없음</div>`}
+    </div>`).join('');
+}
+
 // ══════════════════════════════════════════
-//  피드
+//  구절
 // ══════════════════════════════════════════
-async function loadFeed() {
-  const r=await GET('getSentences');
-  const el=q('#feedList');
-  if (!r.success||!r.sentences.length) {
-    el.innerHTML=`<div class="empty"><div class="ei">💬</div>아직 공유된 문장이 없어요<br><small style="font-size:12px;margin-top:6px;display:block">+ 버튼으로 첫 문장을 올려보세요!</small></div>`;
+async function loadSentences() {
+  const r = await GET('getSentences', { month: thisMonth() });
+  const el = q('#sentList');
+  if (!r.success || !r.sentences.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">🦕</div>아직 공유된 구절이 없어요<br><small style="font-size:12px;margin-top:6px;display:block">🦕 버튼으로 첫 구절을 올려보세요!</small></div>`;
     return;
   }
-  el.innerHTML=r.sentences.map(s=>{
-    const tags=(s.tags||'').split(',').filter(Boolean).map(t=>tagPill(t)).join('');
+  el.innerHTML = r.sentences.map(s => {
+    const tags = (s.tags||'').split(',').filter(Boolean).map(t=>tagPill(t)).join('');
     return `<div class="sc">
       <div class="sc-hd">
         <div class="avatar">${s.memberName[0]}</div>
         <div>
           <div class="sc-name">${s.memberName}</div>
-          <div class="sc-book">${s.bookTitle||''}</div>
+          <div class="sc-date">${fmtD(s.date)}</div>
         </div>
-        <div style="margin-left:auto;font-size:11px;color:var(--muted)">${fmtD(s.date)}</div>
       </div>
       <div class="sc-sent">${esc(s.sentence)}</div>
-      <div class="sc-pg">${s.page?'p. '+s.page:''}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between">
+      ${s.page?`<div class="sc-pg">p. ${s.page}</div>`:''}
+      <div class="sc-ft">
         <div style="display:flex;gap:5px;flex-wrap:wrap">${tags}</div>
         <button class="cmt-btn" onclick="openCmt('${s.sentenceId}','${escA(s.sentence)}')">
-          💬 ${s.commentCount>0?s.commentCount+' 개':'댓글'}
+          💬 ${s.commentCount>0?s.commentCount+'개':'댓글'}
         </button>
       </div>
     </div>`;
@@ -636,145 +667,120 @@ async function loadFeed() {
 }
 
 // ══════════════════════════════════════════
-//  인증
+//  레퍼런스
 // ══════════════════════════════════════════
-function loadCertPage() {
-  q('#certDate').textContent='📅 '+todayStr();
-  q('#certBook').textContent=myBook?myBook.title:'📖 내 책 탭에서 책을 먼저 등록해주세요';
-}
-async function submitCert() {
-  if (!myBook) { flash('certAlert','내 책 탭에서 책을 먼저 등록해주세요.','e'); return; }
-  const pages=parseInt(q('#certPages').value);
-  if (!pages||pages<1) { flash('certAlert','읽은 페이지 수를 입력해주세요.','e'); return; }
-  setLoad('certBtn',true,'인증 중...');
-  try {
-    const r=await POST({ action:'certify', memberId:U.memberId, memberName:U.name,
-      bookId:myBook.bookId, bookTitle:myBook.title,
-      date:todayStr(), todayPages:pages, memo:q('#certMemo').value.trim() });
-    if (r.success) {
-      flash('certAlert',`✅ ${pages}페이지 인증 완료!`,'o');
-      q('#certPages').value=''; q('#certMemo').value='';
-      await loadCertHist(); await loadHome();
-    } else flash('certAlert',r.message,'e');
-  } catch { flash('certAlert','오류가 발생했습니다.','e'); }
-  finally { setLoad('certBtn',false,'인증하기 ✅'); }
-}
-async function loadCertHist() {
-  const r=await GET('getMyCerts',{memberId:U.memberId});
-  const el=q('#certHist');
-  if (!r.success||!r.certs.length) { el.innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">아직 인증 내역이 없어요</div>`; return; }
-  el.innerHTML=r.certs.slice(0,10).map(c=>`
-    <div class="cert-row">
+async function loadRefs() {
+  const r = await GET('getRefs', { month: thisMonth() });
+  const el = q('#refList');
+  if (!r.success || !r.refs.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">📎</div>아직 레퍼런스가 없어요</div>`;
+    return;
+  }
+  const typeIcon = { '유튜브🎬':'🎬', '기사📰':'📰', '블로그✍️':'✍️', '기타🔗':'🔗' };
+  el.innerHTML = r.refs.map(rf => `
+    <a class="ref-card" href="${rf.url}" target="_blank" rel="noopener">
+      <div class="ref-type">${typeIcon[rf.type]||'🔗'}</div>
       <div>
-        <div style="font-size:12px;color:var(--muted)">${c.date}</div>
-        ${c.memo?`<div style="font-size:11px;color:var(--muted)">${esc(c.memo)}</div>`:''}
+        <div class="ref-title">${rf.title}</div>
+        <div class="ref-meta">${rf.memberName} · ${fmtD(rf.date)}</div>
       </div>
-      <div style="font-size:16px;font-weight:700;color:var(--green)">+${c.todayPages}p</div>
+    </a>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  아카이브
+// ══════════════════════════════════════════
+async function loadArchive() {
+  const r = await GET('getArchive');
+  const el = q('#archList');
+  if (!r.success || !r.books.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">📚</div>아직 아카이브가 없어요</div>`;
+    return;
+  }
+  el.innerHTML = r.books.map(b => `
+    <div class="arch-card">
+      ${b.coverUrl
+        ? `<img src="${b.coverUrl}" style="width:44px;height:62px;object-fit:cover;border-radius:5px;border:1px solid var(--border);flex-shrink:0" onerror="this.style.display='none'">`
+        : `<div style="width:44px;height:62px;border-radius:5px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🦕</div>`}
+      <div>
+        <div class="arch-month">${b.month}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--green);margin-top:4px">${b.title}</div>
+        <div style="font-size:12px;color:var(--muted)">${b.author||''}</div>
+      </div>
     </div>`).join('');
 }
 
 // ══════════════════════════════════════════
-//  멤버
+//  저장 액션들
 // ══════════════════════════════════════════
-async function loadMembers() {
-  const r=await GET('getMembers');
-  const el=q('#memberList');
-  if (!r.success||!r.members.length) { el.innerHTML='<div class="empty"><div class="ei">👥</div>멤버가 없어요</div>'; return; }
-  el.innerHTML=r.members.map(m=>{
-    const pct=m.totalPages>0?Math.min(100,Math.round(m.certPages/m.totalPages*100)):0;
-    return `<div class="mc">
-      <div class="mc-hd">
-        <div class="avatar av-lg">${m.name[0]}</div>
-        <div><div class="mc-name">${m.name}</div><div class="mc-book">${m.bookTitle||'책 미등록'}</div></div>
-      </div>
-      <div style="display:flex;gap:16px;margin-bottom:8px">
-        <div style="text-align:center">
-          <div style="font-size:18px;font-weight:700;color:var(--green)">${m.certPages}</div>
-          <div style="font-size:10px;color:var(--muted)">누계 페이지</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:18px;font-weight:700;color:var(--green)">${m.certDays}</div>
-          <div style="font-size:10px;color:var(--muted)">인증 일수</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:18px;font-weight:700;color:var(--accent)">${pct}%</div>
-          <div style="font-size:10px;color:var(--muted)">진행률</div>
-        </div>
-      </div>
-      <div class="pbar"><div class="pfill" style="width:${pct}%"></div></div>
-    </div>`;
-  }).join('');
-}
-
-// ══════════════════════════════════════════
-//  내 책
-// ══════════════════════════════════════════
-async function loadMyBook() {
-  const r=await GET('getMyBook',{memberId:U.memberId});
-  if (r.success&&r.book) { myBook=r.book; }
-}
-function renderMyBookPage() {
-  if (myBook) {
-    q('#bookView').style.display='block'; q('#bookForm').style.display='none';
-    q('#bkTitle').textContent=myBook.title;
-    q('#bkAuthor').textContent=myBook.author||'';
-    q('#bkPages').textContent=myBook.totalPages;
-    q('#bkCoverImg').src=myBook.coverUrl||'';
-    if (myBook.toc) { q('#bkTocTxt').textContent=myBook.toc; q('#bkTocCard').style.display='block'; }
-    q('#bookSaveBtn').textContent='수정하기';
-  } else {
-    q('#bookView').style.display='none'; q('#bookForm').style.display='block';
-  }
-}
-function showBookForm() {
-  q('#bookView').style.display='none'; q('#bookForm').style.display='block';
-  if (myBook) {
-    q('#bTitle').value=myBook.title||''; q('#bAuthor').value=myBook.author||'';
-    q('#bPages').value=myBook.totalPages||''; q('#bCover').value=myBook.coverUrl||'';
-    q('#bToc').value=myBook.toc||''; q('#bookSaveBtn').textContent='수정하기';
-  }
-}
-async function saveBook() {
-  const title=q('#bTitle').value.trim(), pages=parseInt(q('#bPages').value);
-  if (!title) { flash('bookAlert','책 제목을 입력해주세요.','e'); return; }
-  if (!pages||pages<1) { flash('bookAlert','페이지 수를 입력해주세요.','e'); return; }
-  setLoad('bookSaveBtn',true,'저장 중...');
+async function saveMeeting() {
+  const date = q('#mtDate').value;
+  if (!date) { flash('meetingAlert','날짜를 선택해주세요.','e'); return; }
+  setLoad('meetingSaveBtn', true, '저장 중...');
   try {
-    const r=await POST({ action:'saveBook', memberId:U.memberId, memberName:U.name,
-      bookId:myBook?myBook.bookId:'', title, author:q('#bAuthor').value.trim(),
-      totalPages:pages, coverUrl:q('#bCover').value.trim(), toc:q('#bToc').value.trim() });
-    if (r.success) { myBook=r.book; flash('bookAlert','저장되었습니다!','o'); renderMyBookPage(); }
-    else flash('bookAlert',r.message,'e');
-  } catch { flash('bookAlert','오류가 발생했습니다.','e'); }
-  finally { setLoad('bookSaveBtn',false,myBook?'수정하기':'책 등록하기'); }
+    const r = await POST({ action:'saveMeeting', month:thisMonth(),
+      date, location:q('#mtLoc').value.trim(), note:q('#mtNote').value.trim() });
+    if (r.success) { closeOv('meetingOv'); await loadMeeting(); }
+    else flash('meetingAlert', r.message, 'e');
+  } catch { flash('meetingAlert','오류 발생.','e'); }
+  finally { setLoad('meetingSaveBtn', false, '저장'); }
 }
 
-// ══════════════════════════════════════════
-//  문장 올리기
-// ══════════════════════════════════════════
-function openSentModal() {
-  if (!myBook) { alert('내 책 탭에서 책을 먼저 등록해주세요!'); return; }
-  selTags=[]; q('#stxt').value=''; q('#spg').value=''; q('#sentAlert').innerHTML='';
-  document.querySelectorAll('.tag').forEach(t=>t.classList.remove('sel'));
-  openOv('sentOv');
+async function saveBook() {
+  const title = q('#bkTitle').value.trim();
+  if (!title) { flash('bookAlert','제목을 입력해주세요.','e'); return; }
+  setLoad('bookSaveBtn', true, '저장 중...');
+  try {
+    const r = await POST({ action:'saveBook', month:thisMonth(),
+      title, author:q('#bkAuthor').value.trim(), publisher:q('#bkPub').value.trim(),
+      price:q('#bkPrice').value.trim(), coverUrl:q('#bkCover').value.trim(),
+      intro:q('#bkIntro').value.trim(), link:q('#bkLink').value.trim() });
+    if (r.success) { closeOv('bookOv'); await loadBook(); }
+    else flash('bookAlert', r.message, 'e');
+  } catch { flash('bookAlert','오류 발생.','e'); }
+  finally { setLoad('bookSaveBtn', false, '저장'); }
 }
-function toggleTag(btn) {
-  const t=btn.dataset.t;
-  if (selTags.includes(t)) { selTags=selTags.filter(x=>x!==t); btn.classList.remove('sel'); }
-  else { selTags.push(t); btn.classList.add('sel'); }
+
+function openOnelineModal() { q('#olText').value=''; q('#olAlert').innerHTML=''; openOv('onelineOv'); }
+async function submitOneline() {
+  const name=q('#olName').value, text=q('#olText').value.trim();
+  if (!name||!text) { flash('olAlert','이름과 한마디를 입력해주세요.','e'); return; }
+  setLoad('olBtn',true,'등록 중...');
+  try {
+    const r=await POST({ action:'addOneliner', memberName:name, comment:text, month:thisMonth(), date:todayStr() });
+    if (r.success) { closeOv('onelineOv'); await loadOneliners(); }
+    else flash('olAlert',r.message,'e');
+  } catch { flash('olAlert','오류 발생.','e'); }
+  finally { setLoad('olBtn',false,'등록'); }
 }
+
+function openFAB() { openOv('fabOv'); }
+
 async function submitSent() {
-  const txt=q('#stxt').value.trim();
-  if (!txt) { flash('sentAlert','문장을 입력해주세요.','e'); return; }
+  const name=q('#stName').value, txt=q('#stText').value.trim();
+  if (!name||!txt) { flash('sentAlert','이름과 구절을 입력해주세요.','e'); return; }
   setLoad('sentBtn',true,'올리는 중...');
   try {
-    const r=await POST({ action:'addSentence', memberId:U.memberId, memberName:U.name,
-      bookId:myBook.bookId, bookTitle:myBook.title,
-      sentence:txt, page:q('#spg').value.trim(), tags:selTags.join(','), date:todayStr() });
-    if (r.success) { closeOv('sentOv'); await goTab('Feed'); }
+    const r=await POST({ action:'addSentence', memberName:name, sentence:txt,
+      page:q('#stPage').value.trim(), tags:selTags.join(','),
+      month:thisMonth(), date:todayStr() });
+    if (r.success) { closeOv('sentOv'); selTags=[]; document.querySelectorAll('.tag').forEach(t=>t.classList.remove('sel')); await loadSentences(); goTab('Sent'); }
     else flash('sentAlert',r.message,'e');
-  } catch { flash('sentAlert','오류가 발생했습니다.','e'); }
+  } catch { flash('sentAlert','오류 발생.','e'); }
   finally { setLoad('sentBtn',false,'올리기'); }
+}
+
+async function submitRef() {
+  const name=q('#rfName').value, title=q('#rfTitle').value.trim(), url=q('#rfUrl').value.trim();
+  if (!name||!title||!url) { flash('refAlert','모든 필드를 입력해주세요.','e'); return; }
+  setLoad('refBtn',true,'추가 중...');
+  try {
+    const r=await POST({ action:'addRef', memberName:name, title, url,
+      type:q('#rfType').value, month:thisMonth(), date:todayStr() });
+    if (r.success) { closeOv('refOv'); await loadRefs(); goTab('Ref'); }
+    else flash('refAlert',r.message,'e');
+  } catch { flash('refAlert','오류 발생.','e'); }
+  finally { setLoad('refBtn',false,'추가'); }
 }
 
 // ══════════════════════════════════════════
@@ -782,34 +788,30 @@ async function submitSent() {
 // ══════════════════════════════════════════
 async function openCmt(sentenceId, sentText) {
   curSentId=sentenceId;
-  q('#cmtSentPrev').textContent=sentText;
+  q('#cmtPrev').textContent=sentText;
   q('#cmtInput').value='';
   q('#cmtList').innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">불러오는 중...</div>';
   openOv('cmtOv');
   await loadCmts(sentenceId);
 }
-async function loadCmts(sentenceId) {
-  const r=await GET('getComments',{sentenceId});
+async function loadCmts(sid) {
+  const r=await GET('getComments',{sentenceId:sid});
   const el=q('#cmtList');
-  if (!r.success||!r.comments.length) {
-    el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">첫 댓글을 남겨보세요!</div>';
-    return;
-  }
+  if (!r.success||!r.comments.length) { el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">첫 댓글을 남겨보세요!</div>'; return; }
   el.innerHTML=r.comments.map(c=>`
-    <div class="cmt">
+    <div class="cmt-item">
       <div class="cmt-author">${c.memberName}</div>
       <div class="cmt-text">${esc(c.comment)}</div>
-      <div class="cmt-time">${fmtD(c.date)}</div>
     </div>`).join('');
 }
 async function submitCmt() {
-  const txt=q('#cmtInput').value.trim();
-  if (!txt) return;
-  try {
-    const r=await POST({ action:'addComment', sentenceId:curSentId,
-      memberId:U.memberId, memberName:U.name, comment:txt, date:todayStr() });
-    if (r.success) { q('#cmtInput').value=''; await loadCmts(curSentId); }
-  } catch { alert('댓글 등록에 실패했습니다.'); }
+  const raw=q('#cmtInput').value.trim();
+  if (!raw) return;
+  const colonIdx=raw.indexOf(':');
+  let name='익명', text=raw;
+  if (colonIdx>0) { name=raw.slice(0,colonIdx).trim(); text=raw.slice(colonIdx+1).trim(); }
+  const r=await POST({ action:'addComment', sentenceId:curSentId, memberName:name, comment:text, date:todayStr() });
+  if (r.success) { q('#cmtInput').value=''; await loadCmts(curSentId); }
 }
 
 // ══════════════════════════════════════════
@@ -817,6 +819,7 @@ async function submitCmt() {
 // ══════════════════════════════════════════
 const q=sel=>document.querySelector(sel);
 const todayStr=()=>new Date().toLocaleDateString('sv-SE');
+const thisMonth=()=>new Date().toLocaleDateString('sv-SE').slice(0,7);
 const fmtD=s=>s?s.slice(5).replace('-','/'):'';
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 const escA=s=>String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;').slice(0,60);
@@ -825,6 +828,11 @@ function tagPill(t) {
   const m={'!':['pb','❗'],'?':['pq','❓'],'"':['pqt','💬'],'@':['pa','✨']};
   const [cls,icon]=m[t]||['',''];
   return `<span class="pill ${cls}">${icon}</span>`;
+}
+function toggleTag(btn) {
+  const t=btn.dataset.t;
+  if(selTags.includes(t)){selTags=selTags.filter(x=>x!==t);btn.classList.remove('sel');}
+  else{selTags.push(t);btn.classList.add('sel');}
 }
 function flash(id,msg,type) {
   const el=q(`#${id}`);
@@ -838,7 +846,7 @@ function setLoad(id,on,txt) {
 function openOv(id)  { q(`#${id}`).classList.add('on'); }
 function closeOv(id) { q(`#${id}`).classList.remove('on'); }
 document.querySelectorAll('.ov').forEach(ov=>{
-  ov.addEventListener('click',e=>{if(e.target===ov)ov.classList.remove('on');});
+  ov.addEventListener('click',e=>{ if(e.target===ov) ov.classList.remove('on'); });
 });
 </script>
 </body>
