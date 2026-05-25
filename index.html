@@ -914,12 +914,12 @@ async function loadSentences() {
   try {
     const q_ = query(
       collection(db, 'sentences'),
-      where('month','==',thisMonth()),
-      orderBy('createdAt','desc')
+      where('month','==',thisMonth())
     );
     const snap = await getDocs(q_);
     allSentences = [];
     snap.forEach(d => allSentences.push({ id: d.id, ...d.data() }));
+    allSentences.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
     renderSentences();
   } catch(e) {
     el.innerHTML = `<div class="empty"><div class="ei">⚠️</div>${e.message}</div>`;
@@ -998,12 +998,12 @@ window.toggleThread = toggleThread;
 function subscribeComments(sid) {
   if (sentUnsubscribers[sid]) return; // 이미 구독 중
   const q_ = query(
-    collection(db, 'sentences', sid, 'comments'),
-    orderBy('createdAt', 'asc')
+    collection(db, 'sentences', sid, 'comments')
   );
   sentUnsubscribers[sid] = onSnapshot(q_, snap => {
     const comments = [];
     snap.forEach(d => comments.push({ id: d.id, ...d.data() }));
+    comments.sort((a, b) => (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0));
     renderComments(sid, comments);
     // 댓글 수 업데이트
     const countEl = q(`#cmt-count-${sid}`);
@@ -1188,16 +1188,18 @@ window.submitPrep = submitPrep;
 // ══ 레퍼런스 ═════════════════════════════════════════
 async function loadRefs() {
   const el = q('#refList');
-  const q_ = query(collection(db,'refs'), where('month','==',thisMonth()), orderBy('createdAt','desc'));
+  const q_ = query(collection(db,'refs'), where('month','==',thisMonth()));
   const snap = await getDocs(q_);
   if (snap.empty) {
     el.innerHTML = `<div class="empty"><div class="ei">📎</div>아직 레퍼런스가 없어요</div>`;
     return;
   }
+  const refs = [];
+  snap.forEach(d => refs.push(d.data()));
+  refs.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
   const typeIcon = {'유튜브🎬':'🎬','기사📰':'📰','블로그✍️':'✍️','기타🔗':'🔗'};
   el.innerHTML = '';
-  snap.forEach(d => {
-    const r = d.data();
+  refs.forEach(r => {
     el.innerHTML += `
       <a class="ref-card" href="${r.url}" target="_blank" rel="noopener">
         <div class="ref-type">${typeIcon[r.type]||'🔗'}</div>
