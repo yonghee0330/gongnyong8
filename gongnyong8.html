@@ -1144,7 +1144,7 @@ async function loadPrep() {
             </div>`).join('')
           : `<div class="prep-empty">아직 입력된 내용이 없어요</div>`}
       </div>
-      <button class="prep-add-btn ${info.cls}" data-sym="${sym}" onclick="openPrepModal(this.dataset.sym)">
+      <button class="prep-add-btn ${info.cls}" data-sym='${sym}' onclick="openPrepModal(this.dataset.sym)">
         ${info.icon} ${info.label} 추가
       </button>
     </div>`;
