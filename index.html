@@ -431,7 +431,7 @@
       <div class="tag-row" style="margin-top:6px">
         <button class="tag tb" data-t="!" onclick="toggleTag(this)">❗ 느낌표</button>
         <button class="tag tq" data-t="?" onclick="toggleTag(this)">❓ 물음표</button>
-        <button class="tag tqt" data-t="quote" onclick="toggleTag(this)">💬 인용</button>
+        <button class="tag tqt" data-t='"' onclick="toggleTag(this)">💬 인용</button>
         <button class="tag ta" data-t="@" onclick="toggleTag(this)">✨ 적용</button>
       </div>
     </div>
@@ -825,7 +825,7 @@ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'
 const escA=s=>String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;').slice(0,60);
 
 function tagPill(t) {
-  const m={'!':['pb','❗'],'?':['pq','❓'],'quote':['pqt','💬'],'"':['pqt','💬'],'@':['pa','✨']};
+  const m={'!':['pb','❗'],'?':['pq','❓'],'"':['pqt','💬'],'@':['pa','✨']};
   const [cls,icon]=m[t]||['',''];
   return `<span class="pill ${cls}">${icon}</span>`;
 }
