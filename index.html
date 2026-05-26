@@ -1,323 +1,540 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>🦕 공룡 에이트</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --green: #2d5a3d;
-  --green2: #3d7a55;
-  --accent: #5a9e72;
-  --egg: #f5e97a;
-  --bg: #f3f6f0;
-  --cream: #faf9f5;
-  --white: #ffffff;
-  --text: #1e2d22;
-  --muted: #6b8572;
-  --border: #d8e6dc;
-  --bang: #f59e0b;
-  --quote: #8b5cf6;
-  --qmark: #3b82f6;
-  --apply: #ec4899;
-  --bang-bg: #fffbeb;
-  --quote-bg: #f5f3ff;
-  --qmark-bg: #eff6ff;
-  --apply-bg: #fdf2f8;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  max-width: 480px;
-  margin: 0 auto;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-.screen { display: none; min-height: 100vh; padding-bottom: 80px; }
-.screen.on { display: block; }
-.topbar {
-  position: sticky; top: 0;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 13px 16px;
-  display: flex; align-items: center; justify-content: space-between;
-  z-index: 50;
-}
-.topbar-title { font-family: 'Noto Serif KR', serif; font-size: 17px; font-weight: 700; color: var(--green); }
-.topbar-actions { display: flex; gap: 6px; }
-.bottom-nav {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 480px;
-  background: var(--white); border-top: 1px solid var(--border);
-  display: flex; z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-.nav-item {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; padding: 10px 4px 8px;
-  border: none; background: none; cursor: pointer;
-  font-family: inherit; gap: 2px; color: var(--muted); transition: color .15s;
-}
-.nav-item.active { color: var(--green); }
-.nav-item .ni { font-size: 19px; }
-.nav-item .nl { font-size: 10px; font-weight: 700; }
-.nav-add { flex: 1; display: flex; align-items: center; justify-content: center; border: none; background: none; cursor: pointer; padding: 8px; }
-.add-c {
-  width: 48px; height: 48px;
-  background: var(--green); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; color: white; margin-top: -18px;
-  box-shadow: 0 4px 18px rgba(45,90,61,.4);
-}
-.sp { padding: 14px 14px 0; }
-.card { background: var(--white); border-radius: 16px; border: 1px solid var(--border); padding: 16px; margin-bottom: 10px; }
-.btn { width: 100%; padding: 13px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity .15s; }
-.btn:hover { opacity: .85; }
-.btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn-green { background: var(--green); color: white; }
-.btn-ghost { background: var(--white); color: var(--text); border: 1px solid var(--border); }
-.btn-sm { padding: 6px 12px; font-size: 11px; width: auto; border-radius: 8px; border: 1px solid var(--border); background: var(--white); color: var(--text); font-weight: 700; cursor: pointer; font-family: inherit; }
-.btn-row { display: flex; gap: 8px; }
-.btn-row .btn { flex: 1; }
-.fg { margin-bottom: 12px; }
-.fg label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
-.fg input, .fg textarea, .fg select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit; color: var(--text); outline: none; transition: border-color .15s; background: var(--white); }
-.fg input:focus, .fg textarea:focus, .fg select:focus { border-color: var(--accent); }
-.fg textarea { resize: vertical; min-height: 80px; line-height: 1.7; }
-.dday-card { background: var(--green); color: white; border-radius: 16px; padding: 18px 20px; margin-bottom: 10px; position: relative; overflow: hidden; }
-.dday-dino { position: absolute; right: 14px; bottom: 0; font-size: 48px; opacity: .18; }
-.dday-label { font-size: 11px; opacity: .7; margin-bottom: 3px; }
-.dday-num { font-family: 'Noto Serif KR', serif; font-size: 40px; font-weight: 700; line-height: 1; }
-.dday-date { font-size: 12px; opacity: .75; margin-top: 5px; }
-.book-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start; }
-.book-cover { width: 64px; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0; }
-.book-cover-ph { width: 64px; height: 90px; border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 26px; }
-.book-title { font-family: 'Noto Serif KR', serif; font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 3px; }
-.book-author { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
-.section-label { font-size: 12px; font-weight: 700; color: var(--green); margin: 6px 0 8px; }
-.section-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.oneliner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 10px; }
-.oneliner-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 11px; }
-.ol-name { font-size: 10px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
-.ol-text { font-size: 12px; color: var(--text); line-height: 1.6; }
-.ol-empty { font-size: 11px; color: var(--muted); font-style: italic; }
-.sym-badge { display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; }
-.sym-bang { background: var(--bang-bg); color: var(--bang); }
-.sym-quote { background: var(--quote-bg); color: var(--quote); }
-.sym-qmark { background: var(--qmark-bg); color: var(--qmark); }
-.sym-apply { background: var(--apply-bg); color: var(--apply); }
-.filter-row { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 8px; scrollbar-width: none; margin-bottom: 4px; }
-.filter-row::-webkit-scrollbar { display: none; }
-.ftab { flex-shrink: 0; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1.5px solid var(--border); background: var(--white); color: var(--muted); cursor: pointer; font-family: inherit; transition: all .15s; }
-.ftab.active { background: var(--green); color: white; border-color: var(--green); }
-.sc { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 10px; }
-.sc.sym-bang-card { border-left: 3px solid var(--bang); }
-.sc.sym-quote-card { border-left: 3px solid var(--quote); }
-.sc.sym-qmark-card { border-left: 3px solid var(--qmark); }
-.sc.sym-apply-card { border-left: 3px solid var(--apply); }
-.sc-hd { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
-.avatar { width: 32px; height: 32px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-.sc-name { font-size: 13px; font-weight: 700; color: var(--green); }
-.sc-date { font-size: 10px; color: var(--muted); }
-.sc-sent { font-family: 'Noto Serif KR', serif; font-size: 14px; line-height: 1.85; color: var(--text); border-left: 3px solid var(--accent); padding-left: 12px; margin-bottom: 7px; }
-.sc-pg { font-size: 11px; color: var(--muted); margin-bottom: 7px; }
-.sc-ft { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
-.sc-badges { display: flex; gap: 4px; flex-wrap: wrap; }
-.cmt-btn { background: none; border: none; font-size: 12px; color: var(--muted); cursor: pointer; font-family: inherit; padding: 0; display: flex; align-items: center; gap: 3px; }
-.cmt-btn:hover { color: var(--green); }
-.cmt-thread { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-.cmt-item { padding: 8px 0; border-bottom: 1px solid #f0f4f1; }
-.cmt-item:last-child { border-bottom: none; }
-.cmt-hd { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
-.cmt-av { width: 24px; height: 24px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 700; flex-shrink: 0; }
-.cmt-author { font-size: 11px; font-weight: 700; color: var(--green); }
-.cmt-time { font-size: 10px; color: var(--muted); }
-.cmt-text { font-size: 13px; line-height: 1.6; padding-left: 30px; }
-.cmt-reply-btn { background: none; border: none; font-size: 10px; color: var(--muted); cursor: pointer; font-family: inherit; padding: 2px 0 0 30px; }
-.cmt-reply-btn:hover { color: var(--green); }
-.reply-item { margin-left: 24px; margin-top: 6px; padding: 7px 10px; background: var(--bg); border-radius: 10px; border-left: 2px solid var(--border); }
-.reply-hd { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
-.reply-av { width: 20px; height: 20px; background: var(--green2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; flex-shrink: 0; }
-.reply-author { font-size: 10px; font-weight: 700; color: var(--green); }
-.reply-time { font-size: 10px; color: var(--muted); }
-.reply-text { font-size: 12px; line-height: 1.6; color: var(--text); }
-.cmt-input-row { display: flex; gap: 7px; margin-top: 10px; align-items: flex-end; }
-.cmt-input-row select { padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 12px; font-family: inherit; color: var(--text); background: var(--white); outline: none; flex-shrink: 0; width: 90px; }
-.cmt-input-row input { flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; font-family: inherit; outline: none; }
-.cmt-input-row input:focus { border-color: var(--accent); }
-.cmt-send { background: var(--green); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 14px; cursor: pointer; flex-shrink: 0; }
-.reply-form { display: flex; gap: 6px; margin: 6px 0 0 24px; align-items: center; }
-.reply-form select { padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 11px; font-family: inherit; color: var(--text); background: var(--white); outline: none; flex-shrink: 0; width: 80px; }
-.reply-form input { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 16px; font-size: 12px; font-family: inherit; outline: none; }
-.reply-form input:focus { border-color: var(--accent); }
-.reply-send { background: var(--accent); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 13px; cursor: pointer; flex-shrink: 0; }
-.prep-symbol { border-radius: 16px; padding: 14px; margin-bottom: 10px; border: 1.5px solid; }
-.prep-symbol.bang { border-color: var(--bang); background: var(--bang-bg); }
-.prep-symbol.quote { border-color: var(--quote); background: var(--quote-bg); }
-.prep-symbol.qmark { border-color: var(--qmark); background: var(--qmark-bg); }
-.prep-symbol.apply { border-color: var(--apply); background: var(--apply-bg); }
-.prep-sym-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.prep-sym-icon { font-size: 20px; }
-.prep-sym-title { font-size: 13px; font-weight: 700; }
-.prep-sym-desc { font-size: 11px; color: var(--muted); margin-top: 1px; }
-.prep-sym-hd .bang-c { color: var(--bang); }
-.prep-sym-hd .quote-c { color: var(--quote); }
-.prep-sym-hd .qmark-c { color: var(--qmark); }
-.prep-sym-hd .apply-c { color: var(--apply); }
-.prep-cards { display: flex; flex-direction: column; gap: 6px; }
-.prep-card { background: rgba(255,255,255,.7); border-radius: 10px; padding: 10px 12px; display: flex; align-items: flex-start; gap: 8px; }
-.prep-card-avatar { width: 26px; height: 26px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-.prep-card-name { font-size: 11px; font-weight: 700; color: var(--green); margin-bottom: 3px; }
-.prep-card-text { font-size: 13px; line-height: 1.65; color: var(--text); }
-.prep-empty { font-size: 12px; color: var(--muted); text-align: center; padding: 12px 0; }
-.prep-add-btn { width: 100%; padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 700; border: 1.5px dashed; background: transparent; cursor: pointer; font-family: inherit; margin-top: 6px; }
-.prep-add-btn.bang { border-color: var(--bang); color: var(--bang); }
-.prep-add-btn.quote { border-color: var(--quote); color: var(--quote); }
-.prep-add-btn.qmark { border-color: var(--qmark); color: var(--qmark); }
-.prep-add-btn.apply { border-color: var(--apply); color: var(--apply); }
-.ref-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 13px 14px; margin-bottom: 9px; display: flex; gap: 11px; align-items: flex-start; text-decoration: none; color: inherit; }
-.ref-type { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-.ref-title { font-size: 13px; font-weight: 700; color: var(--green); margin-bottom: 2px; }
-.ref-meta { font-size: 11px; color: var(--muted); }
-.arch-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 13px 14px; margin-bottom: 9px; display: flex; gap: 11px; align-items: center; }
-.arch-month { background: var(--green); color: white; border-radius: 8px; padding: 5px 9px; font-size: 11px; font-weight: 700; text-align: center; flex-shrink: 0; min-width: 44px; }
-.ov { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; align-items: flex-end; justify-content: center; }
-.ov.on { display: flex; }
-.msheet { background: var(--white); border-radius: 20px 20px 0 0; padding: 20px; width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; animation: slideUp .22s ease; }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.mhandle { width: 34px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
-.mtitle { font-family: 'Noto Serif KR', serif; font-size: 17px; font-weight: 700; color: var(--green); margin-bottom: 14px; }
-.sym-select-row { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-.sym-select-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--white); cursor: pointer; transition: all .15s; font-family: inherit; text-align: left; width: 100%; }
-.sym-select-item.sel-bang { border-color: var(--bang); background: var(--bang-bg); }
-.sym-select-item.sel-quote { border-color: var(--quote); background: var(--quote-bg); }
-.sym-select-item.sel-qmark { border-color: var(--qmark); background: var(--qmark-bg); }
-.sym-select-item.sel-apply { border-color: var(--apply); background: var(--apply-bg); }
-.sym-select-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-.sym-select-name { font-size: 13px; font-weight: 700; }
-.sym-select-desc { font-size: 11px; color: var(--muted); margin-top: 1px; line-height: 1.5; }
-.sym-select-name.bang-c { color: var(--bang); }
-.sym-select-name.quote-c { color: var(--quote); }
-.sym-select-name.qmark-c { color: var(--qmark); }
-.sym-select-name.apply-c { color: var(--apply); }
-.empty { text-align: center; padding: 48px 24px; color: var(--muted); }
-.ei { font-size: 38px; margin-bottom: 10px; }
-.alert { padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; }
-.ae { background: #fee2e2; color: #991b1b; }
-.ao { background: #dcfce7; color: #166534; }
-.spin { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: rot .6s linear infinite; vertical-align: middle; margin-right: 4px; }
-@keyframes rot { to { transform: rotate(360deg); } }
-.divider { height: 1px; background: var(--border); margin: 10px 0; }
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>🦕 공룡 에이트</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green:   #2d5a3d;
+      --green2:  #3d7a55;
+      --accent:  #5a9e72;
+      --egg:     #f5e97a;
+      --bg:      #f3f6f0;
+      --cream:   #faf9f5;
+      --white:   #ffffff;
+      --text:    #1e2d22;
+      --muted:   #6b8572;
+      --border:  #d8e6dc;
+      /* 4부호 컬러 */
+      --bang:    #f59e0b;   /* ! 느낌표 */
+      --quote:   #8b5cf6;  /* " 따옴표 */
+      --qmark:   #3b82f6;  /* ? 물음표 */
+      --apply:   #ec4899;  /* @ 적용 */
+      --bang-bg: #fffbeb;
+      --quote-bg:#f5f3ff;
+      --qmark-bg:#eff6ff;
+      --apply-bg:#fdf2f8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 화면 ─────────────────────────────── */
+    .screen { display: none; min-height: 100vh; padding-bottom: 80px; }
+    .screen.on { display: block; }
+
+    /* ── 탑바 ─────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 13px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 50;
+    }
+    .topbar-title {
+      font-family: 'Noto Serif KR', serif;
+      font-size: 17px; font-weight: 700; color: var(--green);
+    }
+    .topbar-actions { display: flex; gap: 6px; }
+
+    /* ── 하단 네비 ────────────────────────── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      background: var(--white); border-top: 1px solid var(--border);
+      display: flex; z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 10px 4px 8px;
+      border: none; background: none; cursor: pointer;
+      font-family: inherit; gap: 2px; color: var(--muted); transition: color .15s;
+    }
+    .nav-item.active { color: var(--green); }
+    .nav-item .ni { font-size: 19px; }
+    .nav-item .nl { font-size: 10px; font-weight: 700; }
+    .nav-add {
+      flex: 1; display: flex; align-items: center;
+      justify-content: center; border: none; background: none; cursor: pointer; padding: 8px;
+    }
+    .add-c {
+      width: 48px; height: 48px;
+      background: var(--green); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; color: white; margin-top: -18px;
+      box-shadow: 0 4px 18px rgba(45,90,61,.4);
+    }
+
+    /* ── 패딩 ─────────────────────────────── */
+    .sp { padding: 14px 14px 0; }
+
+    /* ── 카드 ─────────────────────────────── */
+    .card {
+      background: var(--white); border-radius: 16px;
+      border: 1px solid var(--border); padding: 16px; margin-bottom: 10px;
+    }
+
+    /* ── 버튼 ─────────────────────────────── */
+    .btn {
+      width: 100%; padding: 13px; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-ghost { background: var(--white); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm {
+      padding: 6px 12px; font-size: 11px; width: auto; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--white); color: var(--text);
+      font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+    .btn-row { display: flex; gap: 8px; }
+    .btn-row .btn { flex: 1; }
+
+    /* ── 폼 ──────────────────────────────── */
+    .fg { margin-bottom: 12px; }
+    .fg label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+    .fg input, .fg textarea, .fg select {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid var(--border); border-radius: 10px;
+      font-size: 14px; font-family: inherit; color: var(--text);
+      outline: none; transition: border-color .15s; background: var(--white);
+    }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color: var(--accent); }
+    .fg textarea { resize: vertical; min-height: 80px; line-height: 1.7; }
+
+    /* ── D-day 카드 ───────────────────────── */
+    .dday-card {
+      background: var(--green); color: white;
+      border-radius: 16px; padding: 18px 20px;
+      margin-bottom: 10px; position: relative; overflow: hidden;
+    }
+    .dday-dino { position: absolute; right: 14px; bottom: 0; font-size: 48px; opacity: .18; }
+    .dday-label { font-size: 11px; opacity: .7; margin-bottom: 3px; }
+    .dday-num { font-family: 'Noto Serif KR', serif; font-size: 40px; font-weight: 700; line-height: 1; }
+    .dday-date { font-size: 12px; opacity: .75; margin-top: 5px; }
+
+    /* ── 책 카드 ──────────────────────────── */
+    .book-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; margin-bottom: 10px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .book-cover {
+      width: 64px; height: 90px; object-fit: cover;
+      border-radius: 6px; border: 1px solid var(--border); flex-shrink: 0;
+    }
+    .book-cover-ph {
+      width: 64px; height: 90px; border-radius: 6px;
+      border: 1px solid var(--border); flex-shrink: 0;
+      background: var(--bg); display: flex; align-items: center;
+      justify-content: center; font-size: 26px;
+    }
+    .book-title { font-family: 'Noto Serif KR', serif; font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 3px; }
+    .book-author { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+
+    /* ── 섹션 레이블 ──────────────────────── */
+    .section-label { font-size: 12px; font-weight: 700; color: var(--green); margin: 6px 0 8px; }
+    .section-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+
+    /* ── 한마디 ───────────────────────────── */
+    .oneliner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 10px; }
+    .oneliner-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 12px; padding: 11px;
+    }
+    .ol-name { font-size: 10px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+    .ol-text { font-size: 12px; color: var(--text); line-height: 1.6; }
+    .ol-empty { font-size: 11px; color: var(--muted); font-style: italic; }
+
+    /* ── 4부호 배지 ───────────────────────── */
+    .sym-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 700;
+    }
+    .sym-bang  { background: var(--bang-bg);  color: var(--bang); }
+    .sym-quote { background: var(--quote-bg); color: var(--quote); }
+    .sym-qmark { background: var(--qmark-bg); color: var(--qmark); }
+    .sym-apply { background: var(--apply-bg); color: var(--apply); }
+
+    /* ── 4부호 탭 필터 ────────────────────── */
+    .filter-row {
+      display: flex; gap: 6px; overflow-x: auto;
+      padding: 0 0 8px; scrollbar-width: none; margin-bottom: 4px;
+    }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .ftab {
+      flex-shrink: 0; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      border: 1.5px solid var(--border); background: var(--white); color: var(--muted);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .ftab.active { background: var(--green); color: white; border-color: var(--green); }
+
+    /* ── 구절 카드 ────────────────────────── */
+    .sc {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; margin-bottom: 10px;
+    }
+    .sc.sym-bang-card  { border-left: 3px solid var(--bang); }
+    .sc.sym-quote-card { border-left: 3px solid var(--quote); }
+    .sc.sym-qmark-card { border-left: 3px solid var(--qmark); }
+    .sc.sym-apply-card { border-left: 3px solid var(--apply); }
+
+    .sc-hd { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+    .avatar {
+      width: 32px; height: 32px; background: var(--green);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: white; font-size: 12px;
+      font-weight: 700; flex-shrink: 0;
+    }
+    .sc-name { font-size: 13px; font-weight: 700; color: var(--green); }
+    .sc-date { font-size: 10px; color: var(--muted); }
+    .sc-sent {
+      font-family: 'Noto Serif KR', serif; font-size: 14px;
+      line-height: 1.85; color: var(--text);
+      border-left: 3px solid var(--accent);
+      padding-left: 12px; margin-bottom: 7px;
+    }
+    .sc-pg { font-size: 11px; color: var(--muted); margin-bottom: 7px; }
+    .sc-ft { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+    .sc-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+
+    /* ── 댓글 버튼 ────────────────────────── */
+    .cmt-btn {
+      background: none; border: none; font-size: 12px;
+      color: var(--muted); cursor: pointer; font-family: inherit;
+      padding: 0; display: flex; align-items: center; gap: 3px;
+    }
+    .cmt-btn:hover { color: var(--green); }
+
+    /* ── 댓글 글타래 (인라인) ─────────────── */
+    .cmt-thread {
+      margin-top: 10px; padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .cmt-item {
+      padding: 8px 0; border-bottom: 1px solid #f0f4f1;
+    }
+    .cmt-item:last-child { border-bottom: none; }
+    .cmt-hd { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .cmt-av {
+      width: 24px; height: 24px; background: var(--accent);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: white; font-size: 10px; font-weight: 700; flex-shrink: 0;
+    }
+    .cmt-author { font-size: 11px; font-weight: 700; color: var(--green); }
+    .cmt-time { font-size: 10px; color: var(--muted); }
+    .cmt-text { font-size: 13px; line-height: 1.6; padding-left: 30px; }
+    .cmt-reply-btn {
+      background: none; border: none; font-size: 10px; color: var(--muted);
+      cursor: pointer; font-family: inherit; padding: 2px 0 0 30px;
+    }
+    .cmt-reply-btn:hover { color: var(--green); }
+
+    /* 대댓글 */
+    .reply-item {
+      margin-left: 24px; margin-top: 6px;
+      padding: 7px 10px; background: var(--bg);
+      border-radius: 10px; border-left: 2px solid var(--border);
+    }
+    .reply-hd { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+    .reply-av {
+      width: 20px; height: 20px; background: var(--green2);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: white; font-size: 9px; font-weight: 700; flex-shrink: 0;
+    }
+    .reply-author { font-size: 10px; font-weight: 700; color: var(--green); }
+    .reply-time { font-size: 10px; color: var(--muted); }
+    .reply-text { font-size: 12px; line-height: 1.6; color: var(--text); }
+
+    /* 댓글 입력 */
+    .cmt-input-row {
+      display: flex; gap: 7px; margin-top: 10px; align-items: flex-end;
+    }
+    .cmt-input-row select {
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 12px; font-family: inherit; color: var(--text);
+      background: var(--white); outline: none; flex-shrink: 0; width: 90px;
+    }
+    .cmt-input-row input {
+      flex: 1; padding: 8px 12px;
+      border: 1px solid var(--border); border-radius: 20px;
+      font-size: 13px; font-family: inherit; outline: none;
+    }
+    .cmt-input-row input:focus { border-color: var(--accent); }
+    .cmt-send {
+      background: var(--green); color: white; border: none;
+      border-radius: 50%; width: 36px; height: 36px;
+      font-size: 14px; cursor: pointer; flex-shrink: 0;
+    }
+
+    /* 대댓글 입력폼 */
+    .reply-form {
+      display: flex; gap: 6px; margin: 6px 0 0 24px; align-items: center;
+    }
+    .reply-form select {
+      padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px;
+      font-size: 11px; font-family: inherit; color: var(--text);
+      background: var(--white); outline: none; flex-shrink: 0; width: 80px;
+    }
+    .reply-form input {
+      flex: 1; padding: 6px 10px;
+      border: 1px solid var(--border); border-radius: 16px;
+      font-size: 12px; font-family: inherit; outline: none;
+    }
+    .reply-form input:focus { border-color: var(--accent); }
+    .reply-send {
+      background: var(--accent); color: white; border: none;
+      border-radius: 50%; width: 30px; height: 30px;
+      font-size: 13px; cursor: pointer; flex-shrink: 0;
+    }
+
+    /* ── 모임 준비 화면 ───────────────────── */
+    .prep-symbol {
+      border-radius: 16px; padding: 14px; margin-bottom: 10px;
+      border: 1.5px solid;
+    }
+    .prep-symbol.bang  { border-color: var(--bang);  background: var(--bang-bg); }
+    .prep-symbol.quote { border-color: var(--quote); background: var(--quote-bg); }
+    .prep-symbol.qmark { border-color: var(--qmark); background: var(--qmark-bg); }
+    .prep-symbol.apply { border-color: var(--apply); background: var(--apply-bg); }
+    .prep-sym-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .prep-sym-icon { font-size: 20px; }
+    .prep-sym-title { font-size: 13px; font-weight: 700; }
+    .prep-sym-desc { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .prep-sym-hd .bang-c  { color: var(--bang); }
+    .prep-sym-hd .quote-c { color: var(--quote); }
+    .prep-sym-hd .qmark-c { color: var(--qmark); }
+    .prep-sym-hd .apply-c { color: var(--apply); }
+    .prep-cards { display: flex; flex-direction: column; gap: 6px; }
+    .prep-card {
+      background: rgba(255,255,255,.7); border-radius: 10px;
+      padding: 10px 12px; display: flex; align-items: flex-start; gap: 8px;
+    }
+    .prep-card-avatar {
+      width: 26px; height: 26px; background: var(--green);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; color: white; font-size: 10px;
+      font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+    .prep-card-name { font-size: 11px; font-weight: 700; color: var(--green); margin-bottom: 3px; }
+    .prep-card-text { font-size: 13px; line-height: 1.65; color: var(--text); }
+    .prep-empty { font-size: 12px; color: var(--muted); text-align: center; padding: 12px 0; }
+    .prep-add-btn {
+      width: 100%; padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 700;
+      border: 1.5px dashed; background: transparent; cursor: pointer; font-family: inherit;
+      margin-top: 6px;
+    }
+    .prep-add-btn.bang  { border-color: var(--bang);  color: var(--bang); }
+    .prep-add-btn.quote { border-color: var(--quote); color: var(--quote); }
+    .prep-add-btn.qmark { border-color: var(--qmark); color: var(--qmark); }
+    .prep-add-btn.apply { border-color: var(--apply); color: var(--apply); }
+
+    /* ── 레퍼런스 ─────────────────────────── */
+    .ref-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 13px 14px; margin-bottom: 9px;
+      display: flex; gap: 11px; align-items: flex-start;
+      text-decoration: none; color: inherit;
+    }
+    .ref-type { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .ref-title { font-size: 13px; font-weight: 700; color: var(--green); margin-bottom: 2px; }
+    .ref-meta { font-size: 11px; color: var(--muted); }
+
+    /* ── 아카이브 ─────────────────────────── */
+    .arch-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 13px 14px; margin-bottom: 9px;
+      display: flex; gap: 11px; align-items: center;
+    }
+    .arch-month {
+      background: var(--green); color: white;
+      border-radius: 8px; padding: 5px 9px;
+      font-size: 11px; font-weight: 700; text-align: center;
+      flex-shrink: 0; min-width: 44px;
+    }
+
+    /* ── 모달 (바텀시트) ──────────────────── */
+    .ov {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.45); z-index: 200;
+      align-items: flex-end; justify-content: center;
+    }
+    .ov.on { display: flex; }
+    .msheet {
+      background: var(--white); border-radius: 20px 20px 0 0;
+      padding: 20px; width: 100%; max-width: 480px;
+      max-height: 88vh; overflow-y: auto;
+      animation: slideUp .22s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .mhandle { width: 34px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+    .mtitle { font-family: 'Noto Serif KR', serif; font-size: 17px; font-weight: 700; color: var(--green); margin-bottom: 14px; }
+
+    /* ── 태그 선택 ────────────────────────── */
+    .sym-select-row { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    .sym-select-item {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px;
+      border-radius: 12px; border: 1.5px solid var(--border);
+      background: var(--white); cursor: pointer; transition: all .15s;
+      font-family: inherit; text-align: left; width: 100%;
+    }
+    .sym-select-item.sel-bang  { border-color: var(--bang);  background: var(--bang-bg); }
+    .sym-select-item.sel-quote { border-color: var(--quote); background: var(--quote-bg); }
+    .sym-select-item.sel-qmark { border-color: var(--qmark); background: var(--qmark-bg); }
+    .sym-select-item.sel-apply { border-color: var(--apply); background: var(--apply-bg); }
+    .sym-select-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .sym-select-name { font-size: 13px; font-weight: 700; }
+    .sym-select-desc { font-size: 11px; color: var(--muted); margin-top: 1px; line-height: 1.5; }
+    .sym-select-name.bang-c  { color: var(--bang); }
+    .sym-select-name.quote-c { color: var(--quote); }
+    .sym-select-name.qmark-c { color: var(--qmark); }
+    .sym-select-name.apply-c { color: var(--apply); }
+
+    /* ── 기타 ─────────────────────────────── */
+    .empty { text-align: center; padding: 48px 24px; color: var(--muted); }
+    .ei { font-size: 38px; margin-bottom: 10px; }
+    .alert { padding: 10px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 10px; }
+    .ae { background: #fee2e2; color: #991b1b; }
+    .ao { background: #dcfce7; color: #166534; }
+    .spin {
+      display: inline-block; width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,.3); border-top-color: white;
+      border-radius: 50%; animation: rot .6s linear infinite; vertical-align: middle; margin-right: 4px;
+    }
+    @keyframes rot { to { transform: rotate(360deg); } }
+    .divider { height: 1px; background: var(--border); margin: 10px 0; }
+  </style>
 </head>
 <body>
 <div id="appWrap">
 
-<!-- 홈 -->
-<div class="screen on" id="scHome">
-  <div class="topbar">
-    <div class="topbar-title">🦕 공룡 에이트</div>
-    <div class="topbar-actions">
-      <button class="btn-sm" onclick="openOv('meetingOv')">📅 모임 설정</button>
-      <button class="btn-sm" onclick="openOv('bookOv')">📖 책 설정</button>
-    </div>
-  </div>
-  <div class="sp">
-    <div class="dday-card" id="ddayCard">
-      <div class="dday-dino">🦕</div>
-      <div class="dday-label">다음 모임까지</div>
-      <div class="dday-num" id="ddayNum">-</div>
-      <div class="dday-date" id="ddayDate">모임 날짜를 설정해주세요</div>
-    </div>
-    <div id="bookArea">
-      <div class="card" style="text-align:center;color:var(--muted);font-size:13px;padding:20px">
-        📚 이달의 책<br><br>🦕 책을 설정해주세요
+  <!-- ── 홈 ── -->
+  <div class="screen on" id="scHome">
+    <div class="topbar">
+      <div class="topbar-title">🦕 공룡 에이트</div>
+      <div class="topbar-actions">
+        <button class="btn-sm" onclick="openOv('meetingOv')">📅 모임</button>
+        <button class="btn-sm" onclick="openOv('bookOv')">📖 책</button>
       </div>
     </div>
-    <div class="section-row">
-      <div class="section-label" style="margin:0">💬 이달의 한마디</div>
-      <button class="btn-sm" onclick="openOnelineModal()">+ 한마디 남기기</button>
-    </div>
-    <div class="oneliner-grid" id="onelineGrid"></div>
-  </div>
-</div>
+    <div class="sp">
+      <div class="dday-card" id="ddayCard">
+        <div class="dday-dino">🦕</div>
+        <div class="dday-label">다음 모임까지</div>
+        <div class="dday-num" id="ddayNum">-</div>
+        <div class="dday-date" id="ddayDate">모임 날짜를 설정해주세요</div>
+      </div>
 
-<!-- 구절 -->
-<div class="screen" id="scSent">
-  <div class="topbar">
-    <div class="topbar-title">💬 구절 나누기</div>
-  </div>
-  <div class="sp">
-    <div class="filter-row" id="sentFilter">
-      <button class="ftab active" data-f="all" onclick="filterSent('all',this)">전체</button>
-      <button class="ftab" data-f="!" onclick="filterSent('!',this)">❗ 느낌표</button>
-      <button class="ftab" data-f='"' onclick='filterSent(&apos;"&apos;,this)'>" 따옴표</button>
-      <button class="ftab" data-f="?" onclick="filterSent('?',this)">? 물음표</button>
-      <button class="ftab" data-f="@" onclick="filterSent('@',this)">@ 적용</button>
-    </div>
-    <div id="sentList">
-      <div class="empty"><div class="ei">🦕</div>아직 공유된 구절이 없어요</div>
-    </div>
-  </div>
-</div>
+      <div id="bookArea">
+        <div class="card" style="text-align:center;color:var(--muted);font-size:13px;padding:20px">
+          🦕 이달의 책을 설정해주세요
+        </div>
+      </div>
 
-<!-- 모임 준비 -->
-<div class="screen" id="scPrep">
-  <div class="topbar">
-    <div class="topbar-title">📋 모임 준비</div>
+      <div class="section-row">
+        <div class="section-label" style="margin:0">💬 이달의 한마디</div>
+        <button class="btn-sm" onclick="openOnelineModal()">+ 남기기</button>
+      </div>
+      <div class="oneliner-grid" id="onelineGrid"></div>
+    </div>
   </div>
-  <div class="sp">
-    <div class="card" style="margin-bottom:12px;padding:12px 14px">
-      <div style="font-size:12px;color:var(--muted);line-height:1.7">
-        모임 전, 4가지 부호로 읽은 내용을 미리 정리해보세요.<br>
-        모임 때 함께 나눌 이야기의 씨앗이 됩니다 🌱
+
+  <!-- ── 구절 ── -->
+  <div class="screen" id="scSent">
+    <div class="topbar">
+      <div class="topbar-title">💬 구절 나누기</div>
+    </div>
+    <div class="sp">
+      <div class="filter-row" id="sentFilter">
+        <button class="ftab active" data-f="all" onclick="filterSent('all',this)">전체</button>
+        <button class="ftab" data-f="!" onclick="filterSent('!',this)">❗ 느낌표</button>
+        <button class="ftab" data-f='"' onclick="filterSent('"',this)">" 따옴표</button>
+        <button class="ftab" data-f="?" onclick="filterSent('?',this)">? 물음표</button>
+        <button class="ftab" data-f="@" onclick="filterSent('@',this)">@ 적용</button>
+      </div>
+      <div id="sentList">
+        <div class="empty"><div class="ei">🦕</div>아직 공유된 구절이 없어요</div>
       </div>
     </div>
-    <div id="prepContent"></div>
   </div>
-</div>
 
-<!-- 레퍼런스 -->
-<div class="screen" id="scRef">
-  <div class="topbar"><div class="topbar-title">📎 레퍼런스</div></div>
-  <div class="sp" id="refList">
-    <div class="empty"><div class="ei">📎</div>아직 레퍼런스가 없어요</div>
+  <!-- ── 모임 준비 ── -->
+  <div class="screen" id="scPrep">
+    <div class="topbar">
+      <div class="topbar-title">📋 모임 준비</div>
+    </div>
+    <div class="sp">
+      <div class="card" style="margin-bottom:12px;padding:12px 14px">
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">
+          모임 전, 4가지 부호로 읽은 내용을 미리 정리해보세요.<br>
+          모임 때 함께 나눌 이야기의 씨앗이 됩니다 🌱
+        </div>
+      </div>
+      <div id="prepContent"></div>
+    </div>
   </div>
-</div>
 
-<!-- 아카이브 -->
-<div class="screen" id="scArch">
-  <div class="topbar"><div class="topbar-title">📚 아카이브</div></div>
-  <div class="sp" id="archList">
-    <div class="empty"><div class="ei">📚</div>아직 아카이브가 없어요</div>
+  <!-- ── 레퍼런스 ── -->
+  <div class="screen" id="scRef">
+    <div class="topbar"><div class="topbar-title">📎 레퍼런스</div></div>
+    <div class="sp" id="refList">
+      <div class="empty"><div class="ei">📎</div>아직 레퍼런스가 없어요</div>
+    </div>
   </div>
+
+  <!-- ── 아카이브 ── -->
+  <div class="screen" id="scArch">
+    <div class="topbar"><div class="topbar-title">📚 아카이브</div></div>
+    <div class="sp" id="archList">
+      <div class="empty"><div class="ei">📚</div>아직 아카이브가 없어요</div>
+    </div>
+  </div>
+
+  <!-- 하단 네비 -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-sc="Home" onclick="goTab('Home')">
+      <span class="ni">🏠</span><span class="nl">홈</span>
+    </button>
+    <button class="nav-item" data-sc="Sent" onclick="goTab('Sent')">
+      <span class="ni">💬</span><span class="nl">구절</span>
+    </button>
+    <button class="nav-add" onclick="openFAB()">
+      <div class="add-c">🦕</div>
+    </button>
+    <button class="nav-item" data-sc="Prep" onclick="goTab('Prep')">
+      <span class="ni">📋</span><span class="nl">모임준비</span>
+    </button>
+    <button class="nav-item" data-sc="Arch" onclick="goTab('Arch')">
+      <span class="ni">📚</span><span class="nl">아카이브</span>
+    </button>
+  </nav>
 </div>
 
-<!-- 하단 네비 -->
-<nav class="bottom-nav">
-  <button class="nav-item active" data-sc="Home" onclick="goTab('Home')">
-    <span class="ni">🏠</span><span class="nl">홈</span>
-  </button>
-  <button class="nav-item" data-sc="Sent" onclick="goTab('Sent')">
-    <span class="ni">💬</span><span class="nl">구절</span>
-  </button>
-  <button class="nav-add" onclick="openFAB()">
-    <div class="add-c">🦕</div>
-  </button>
-  <button class="nav-item" data-sc="Prep" onclick="goTab('Prep')">
-    <span class="ni">📋</span><span class="nl">모임준비</span>
-  </button>
-  <button class="nav-item" data-sc="Arch" onclick="goTab('Arch')">
-    <span class="ni">📚</span><span class="nl">아카이브</span>
-  </button>
-</nav>
-</div>
-
-<!-- 모달: 책 설정 -->
+<!-- ══ 모달: 책 설정 ══ -->
 <div class="ov" id="bookOv">
   <div class="msheet">
     <div class="mhandle"></div>
@@ -337,7 +554,7 @@ body {
   </div>
 </div>
 
-<!-- 모달: 모임 설정 -->
+<!-- ══ 모달: 모임 설정 ══ -->
 <div class="ov" id="meetingOv">
   <div class="msheet">
     <div class="mhandle"></div>
@@ -353,7 +570,7 @@ body {
   </div>
 </div>
 
-<!-- 모달: 한마디 -->
+<!-- ══ 모달: 한마디 ══ -->
 <div class="ov" id="onelineOv">
   <div class="msheet">
     <div class="mhandle"></div>
@@ -370,7 +587,7 @@ body {
   </div>
 </div>
 
-<!-- 모달: 구절 올리기 -->
+<!-- ══ 모달: 구절 올리기 ══ -->
 <div class="ov" id="sentOv">
   <div class="msheet">
     <div class="mhandle"></div>
@@ -422,7 +639,7 @@ body {
   </div>
 </div>
 
-<!-- 모달: 모임준비 입력 -->
+<!-- ══ 모달: 모임준비 입력 ══ -->
 <div class="ov" id="prepOv">
   <div class="msheet">
     <div class="mhandle"></div>
@@ -441,7 +658,7 @@ body {
   </div>
 </div>
 
-<!-- 모달: 레퍼런스 -->
+<!-- ══ 모달: 레퍼런스 ══ -->
 <div class="ov" id="refOv">
   <div class="msheet">
     <div class="mhandle"></div>
@@ -468,7 +685,7 @@ body {
   </div>
 </div>
 
-<!-- 모달: FAB -->
+<!-- ══ 모달: FAB ══ -->
 <div class="ov" id="fabOv">
   <div class="msheet">
     <div class="mhandle"></div>
@@ -481,52 +698,54 @@ body {
   </div>
 </div>
 
+
 <script type="module">
-import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
-import {
-  getFirestore, collection, doc,
-  addDoc, setDoc, getDoc, getDocs,
-  query, where, orderBy, onSnapshot,
-  serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
+// ══════════════════════════════════════════════════════
+//  🦕 공룡 에이트 — Firebase Firestore 연동
+// ══════════════════════════════════════════════════════
+import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
+import { getFirestore, collection, doc,
+         addDoc, setDoc, getDoc, getDocs,
+         query, where, orderBy, onSnapshot,
+         serverTimestamp, Timestamp }              from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
 
-// ── Firebase 설정 ──────────────────────────────────────
+// ── Firebase 설정 ────────────────────────────────────
 const firebaseConfig = {
-  apiKey: 'AIzaSyApeN8utJH3RznsZqRs4VAExl0UnNpAvKg',
-  authDomain: 'gongnyong8-c2f22.firebaseapp.com',
-  projectId: 'gongnyong8-c2f22',
-  storageBucket: 'gongnyong8-c2f22.firebasestorage.app',
+  apiKey:            'AIzaSyApeN8utJH3RznsZqRs4VAExl0UnNpAvKg',
+  authDomain:        'gongnyong8-c2f22.firebaseapp.com',
+  projectId:         'gongnyong8-c2f22',
+  storageBucket:     'gongnyong8-c2f22.firebasestorage.app',
   messagingSenderId: '514587455716',
-  appId: '1:514587455716:web:5ccbb511655ca9f762fcf1'
+  appId:             '1:514587455716:web:5ccbb511655ca9f762fcf1'
 };
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 
-// ── 멤버 & 부호 ────────────────────────────────────────
+// ── 멤버 & 부호 ──────────────────────────────────────
 const MEMBERS = ['박용희','강지혜','김양우','남우현','서수정','이정은','최별님','Ellory Park'];
+
 const SYMBOLS = {
-  '!':  { label:'! 느낌표',   icon:'❗', cls:'bang',  desc:'책을 처음 접하고 느낀 점' },
-  '"':  { label:'" " 따옴표', icon:'💬', cls:'quote', desc:'인용하고 싶은 문장' },
-  '?':  { label:'? 물음표',   icon:'❓', cls:'qmark', desc:'읽으며 궁금했던 것' },
-  '@':  { label:'@ 적용',     icon:'✨', cls:'apply', desc:'삶에 적용하게 된 부분' },
+  '!': { label:'! 느낌표',   icon:'❗', cls:'bang',  desc:'책을 처음 접하고 느낀 점 — 표지나 제목, 첫인상을 가볍게' },
+  '"': { label:'" " 따옴표', icon:'💬', cls:'quote', desc:'인용하고 싶은 문장 — 읽으며 좋았던, 인사이트가 있었던 문장' },
+  '?': { label:'? 물음표',   icon:'❓', cls:'qmark', desc:'읽으며 궁금했던 것 — 몰라서, 의아해서, 질문이 생긴 것' },
+  '@': { label:'@ 적용',     icon:'✨', cls:'apply', desc:'삶에 적용하게 된 부분 — 머리로 아는 데서 그치지 않고' },
 };
 
-// ── 상태 ──────────────────────────────────────────────
-let selSyms = [];
+// ── 상태 ─────────────────────────────────────────────
+let selSyms   = [];
 let curFilter = 'all';
 let curPrepSym = null;
 let allSentences = [];
-let sentUnsubscribers = {};
-
-const thisMonth = () => new Date().toLocaleDateString('sv-SE').slice(0, 7);
+let sentUnsubscribers = {}; // 실시간 댓글 리스너
+const thisMonth = () => new Date().toLocaleDateString('sv-SE').slice(0, 7); // 'YYYY-MM'
 const todayStr  = () => new Date().toLocaleDateString('sv-SE');
 const fmtD = s => s ? String(s).slice(5).replace('-', '/') : '';
 const esc  = s => String(s)
   .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 const q = sel => document.querySelector(sel);
 
-// ── 초기화 ────────────────────────────────────────────
+// ── 초기화 ───────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   fillSelects();
   loadHome();
@@ -547,7 +766,7 @@ function setupOverlayClose() {
   });
 }
 
-// ── 탭 이동 ───────────────────────────────────────────
+// ── 탭 이동 ──────────────────────────────────────────
 async function goTab(tab) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -562,34 +781,12 @@ async function goTab(tab) {
 }
 window.goTab = goTab;
 
-// ── 오버레이 ──────────────────────────────────────────
-function openOv(id)  { q(`#${id}`).classList.add('on'); }
-function closeOv(id) { q(`#${id}`).classList.remove('on'); }
-window.openOv = openOv; window.closeOv = closeOv;
-
-function openFAB() { openOv('fabOv'); }
-window.openFAB = openFAB;
-
-// ── 알림 & 로딩 ───────────────────────────────────────
-function flash(elId, msg, type) {
-  const el = q(`#${elId}`);
-  if (!el) return;
-  el.innerHTML = `<div class="alert a${type}">${msg}</div>`;
-  setTimeout(() => { el.innerHTML = ''; }, 3000);
-}
-function setLoad(btnId, loading, label) {
-  const btn = q(`#${btnId}`);
-  if (!btn) return;
-  btn.disabled = loading;
-  btn.innerHTML = loading ? `<span class="spin"></span>${label}` : label;
-}
-
-// ══ 홈 ══════════════════════════════════════════════════
+// ══ 홈 ═══════════════════════════════════════════════
 async function loadHome() {
   await Promise.all([loadMeeting(), loadBook(), loadOneliners()]);
 }
 
-// ── 모임 설정 ─────────────────────────────────────────
+// ── 모임 설정 ────────────────────────────────────────
 async function loadMeeting() {
   const snap = await getDoc(doc(db, 'settings', 'meeting'));
   if (!snap.exists()) return;
@@ -598,13 +795,13 @@ async function loadMeeting() {
   const meet  = new Date(m.date); meet.setHours(0,0,0,0);
   const diff  = Math.round((meet - today) / 86400000);
   const card  = q('#ddayCard');
-  if (diff > 0)      q('#ddayNum').textContent = 'D-' + diff;
+  if (diff > 0)       q('#ddayNum').textContent = 'D-' + diff;
   else if (diff === 0){ q('#ddayNum').textContent = 'D-DAY 🎉'; card.style.background='#e67e22'; }
-  else               q('#ddayNum').textContent = '모임 완료';
+  else                 q('#ddayNum').textContent = '모임 완료';
   q('#ddayDate').textContent = `${m.date}${m.location?' · '+m.location:''}${m.note?' · '+m.note:''}`;
-  q('#mtDate').value = m.date     || '';
+  q('#mtDate').value = m.date || '';
   q('#mtLoc').value  = m.location || '';
-  q('#mtNote').value = m.note     || '';
+  q('#mtNote').value = m.note || '';
 }
 
 async function saveMeeting() {
@@ -623,18 +820,18 @@ async function saveMeeting() {
 }
 window.saveMeeting = saveMeeting;
 
-// ── 책 설정 ───────────────────────────────────────────
+// ── 책 설정 ──────────────────────────────────────────
 async function loadBook() {
   const snap = await getDoc(doc(db, 'settings', 'book_' + thisMonth()));
   const el = q('#bookArea');
   if (!snap.exists()) {
-    el.innerHTML = `<div class="card" style="text-align:center;color:var(--muted);font-size:13px;padding:20px">📚 이달의 책<br><br>🦕 책을 설정해주세요</div>`;
+    el.innerHTML = `<div class="card" style="text-align:center;color:var(--muted);font-size:13px;padding:20px">🦕 이달의 책을 설정해주세요</div>`;
     return;
   }
   const b = snap.data();
   ['bkTitle','bkAuthor','bkPub','bkPrice','bkCover','bkIntro','bkLink'].forEach(id => {
-    const field = { bkTitle:'title', bkAuthor:'author', bkPub:'publisher', bkPrice:'price',
-                    bkCover:'coverUrl', bkIntro:'intro', bkLink:'link' }[id];
+    const field = { bkTitle:'title',bkAuthor:'author',bkPub:'publisher',bkPrice:'price',
+                    bkCover:'coverUrl',bkIntro:'intro',bkLink:'link' }[id];
     if (q(`#${id}`)) q(`#${id}`).value = b[field] || '';
   });
   el.innerHTML = `
@@ -645,9 +842,9 @@ async function loadBook() {
       <div style="flex:1;min-width:0">
         <div class="book-title">${esc(b.title)}</div>
         <div class="book-author">${esc(b.author||'')}${b.publisher?' · '+esc(b.publisher):''}</div>
-        ${b.price  ? `<div style="font-size:11px;color:var(--muted)">${esc(b.price)}</div>` : ''}
-        ${b.intro  ? `<div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6">${esc(b.intro)}</div>` : ''}
-        ${b.link   ? `<a href="${b.link}" target="_blank" style="font-size:12px;color:var(--accent);display:inline-block;margin-top:5px">책 정보 →</a>` : ''}
+        ${b.price?`<div style="font-size:11px;color:var(--muted)">${esc(b.price)}</div>`:''}
+        ${b.intro?`<div style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6">${esc(b.intro)}</div>`:''}
+        ${b.link?`<a href="${b.link}" target="_blank" style="font-size:12px;color:var(--accent);display:inline-block;margin-top:5px">책 정보 →</a>`:''}
       </div>
     </div>`;
 }
@@ -659,12 +856,12 @@ async function saveBook() {
   try {
     await setDoc(doc(db, 'settings', 'book_' + thisMonth()), {
       month: thisMonth(), title,
-      author: q('#bkAuthor').value.trim(),
+      author:    q('#bkAuthor').value.trim(),
       publisher: q('#bkPub').value.trim(),
-      price: q('#bkPrice').value.trim(),
-      coverUrl: q('#bkCover').value.trim(),
-      intro: q('#bkIntro').value.trim(),
-      link: q('#bkLink').value.trim(),
+      price:     q('#bkPrice').value.trim(),
+      coverUrl:  q('#bkCover').value.trim(),
+      intro:     q('#bkIntro').value.trim(),
+      link:      q('#bkLink').value.trim(),
       updatedAt: serverTimestamp()
     });
     closeOv('bookOv');
@@ -674,7 +871,7 @@ async function saveBook() {
 }
 window.saveBook = saveBook;
 
-// ── 한마디 ────────────────────────────────────────────
+// ── 한마디 ───────────────────────────────────────────
 async function loadOneliners() {
   const q_ = query(collection(db, 'oneliners'), where('month','==',thisMonth()));
   const snap = await getDocs(q_);
@@ -698,6 +895,7 @@ async function submitOneline() {
   if (!name || !text) { flash('olAlert','이름과 한마디를 입력해주세요.','e'); return; }
   setLoad('olBtn', true, '등록 중...');
   try {
+    // 같은 달 같은 멤버 → upsert
     await setDoc(doc(db, 'oneliners', thisMonth() + '_' + name), {
       month: thisMonth(), memberName: name, comment: text,
       date: todayStr(), updatedAt: serverTimestamp()
@@ -709,7 +907,7 @@ async function submitOneline() {
 }
 window.submitOneline = submitOneline;
 
-// ══ 구절 ════════════════════════════════════════════════
+// ══ 구절 ═════════════════════════════════════════════
 async function loadSentences() {
   const el = q('#sentList');
   el.innerHTML = `<div class="empty"><div class="ei">🦕</div>불러오는 중...</div>`;
@@ -736,17 +934,12 @@ function filterSent(sym, btn) {
 }
 window.filterSent = filterSent;
 
-function symBadge(t) {
-  const s = SYMBOLS[t];
-  if (!s) return '';
-  return `<span class="sym-badge sym-${s.cls}">${s.icon} ${s.label}</span>`;
-}
-
 function renderSentences() {
   const el = q('#sentList');
   const list = curFilter === 'all'
     ? allSentences
     : allSentences.filter(s => (s.tags||'').split(',').includes(curFilter));
+
   if (!list.length) {
     el.innerHTML = `<div class="empty"><div class="ei">🦕</div>${curFilter==='all'?'아직 공유된 구절이 없어요':'이 부호의 구절이 없어요'}</div>`;
     return;
@@ -754,36 +947,36 @@ function renderSentences() {
   el.innerHTML = list.map(s => {
     const tags = (s.tags||'').split(',').filter(Boolean);
     const primarySym = tags[0];
-    const borderCls  = primarySym ? `sym-${SYMBOLS[primarySym]?.cls||''}-card` : '';
+    const borderCls = primarySym ? `sym-${SYMBOLS[primarySym]?.cls||''}-card` : '';
     return `
-      <div class="sc ${borderCls}" id="sc-${s.id}">
-        <div class="sc-hd">
-          <div class="avatar">${s.memberName[0]}</div>
-          <div>
-            <div class="sc-name">${esc(s.memberName)}</div>
-            <div class="sc-date">${fmtD(s.date)}</div>
-          </div>
-          <div style="margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">
-            ${tags.map(t => symBadge(t)).join('')}
-          </div>
+    <div class="sc ${borderCls}" id="sc-${s.id}">
+      <div class="sc-hd">
+        <div class="avatar">${s.memberName[0]}</div>
+        <div>
+          <div class="sc-name">${esc(s.memberName)}</div>
+          <div class="sc-date">${fmtD(s.date)}</div>
         </div>
-        <div class="sc-sent">${esc(s.sentence)}</div>
-        ${s.page ? `<div class="sc-pg">p. ${s.page}</div>` : ''}
-        <div class="sc-ft">
-          <button class="cmt-btn" onclick="toggleThread('${s.id}')">
-            💬 <span id="cmt-count-${s.id}">${s.commentCount>0 ? s.commentCount+'개 댓글' : '댓글 달기'}</span>
-          </button>
+        <div style="margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">
+          ${tags.map(t => symBadge(t)).join('')}
         </div>
-        <div class="cmt-thread" id="thread-${s.id}" style="display:none">
-          <div id="cmts-${s.id}"></div>
-          <div class="cmt-input-row">
-            <select id="cname-${s.id}">${MEMBERS.map(m=>`<option value="${m}">${m}</option>`).join('')}</select>
-            <input type="text" id="cinput-${s.id}" placeholder="댓글을 남겨보세요"
-              onkeydown="if(event.key==='Enter')submitCmt('${s.id}')"/>
-            <button class="cmt-send" onclick="submitCmt('${s.id}')">↑</button>
-          </div>
+      </div>
+      <div class="sc-sent">${esc(s.sentence)}</div>
+      ${s.page?`<div class="sc-pg">p. ${s.page}</div>`:''}
+      <div class="sc-ft">
+        <button class="cmt-btn" onclick="toggleThread('${s.id}')">
+          💬 <span id="cmt-count-${s.id}">${s.commentCount>0?s.commentCount+'개 댓글':'댓글 달기'}</span>
+        </button>
+      </div>
+      <div class="cmt-thread" id="thread-${s.id}" style="display:none">
+        <div id="cmts-${s.id}"></div>
+        <div class="cmt-input-row">
+          <select id="cname-${s.id}">${MEMBERS.map(m=>`<option value="${m}">${m}</option>`).join('')}</select>
+          <input type="text" id="cinput-${s.id}" placeholder="댓글을 남겨보세요"
+            onkeydown="if(event.key==='Enter')submitCmt('${s.id}')"/>
+          <button class="cmt-send" onclick="submitCmt('${s.id}')">↑</button>
         </div>
-      </div>`;
+      </div>
+    </div>`;
   }).join('');
 }
 
@@ -792,6 +985,7 @@ async function toggleThread(sid) {
   const isOpen = thread.style.display !== 'none';
   if (isOpen) {
     thread.style.display = 'none';
+    // 리스너 해제
     if (sentUnsubscribers[sid]) { sentUnsubscribers[sid](); delete sentUnsubscribers[sid]; }
   } else {
     thread.style.display = 'block';
@@ -800,189 +994,176 @@ async function toggleThread(sid) {
 }
 window.toggleThread = toggleThread;
 
+// 실시간 댓글 리스너
 function subscribeComments(sid) {
-  if (sentUnsubscribers[sid]) return;
+  if (sentUnsubscribers[sid]) return; // 이미 구독 중
   const q_ = query(
     collection(db, 'sentences', sid, 'comments'),
-    orderBy('createdAt','asc')
+    orderBy('createdAt', 'asc')
   );
   sentUnsubscribers[sid] = onSnapshot(q_, snap => {
-    const el = q(`#cmts-${sid}`);
-    if (!el) return;
-    if (snap.empty) { el.innerHTML = ''; return; }
-    el.innerHTML = snap.docs.map(d => {
-      const c = d.data();
-      const replies = '';
-      return `
-        <div class="cmt-item">
-          <div class="cmt-hd">
-            <div class="cmt-av">${c.author[0]}</div>
-            <span class="cmt-author">${esc(c.author)}</span>
-            <span class="cmt-time">${fmtD(c.date||'')}</span>
-          </div>
-          <div class="cmt-text">${esc(c.text)}</div>
-          <button class="cmt-reply-btn" onclick="toggleReplyForm('${sid}','${d.id}')">↩ 답글</button>
-          <div id="replies-${sid}-${d.id}"></div>
-          <div id="replyform-${sid}-${d.id}" style="display:none">
-            <div class="reply-form">
-              <select id="rname-${sid}-${d.id}">${MEMBERS.map(m=>`<option value="${m}">${m}</option>`).join('')}</select>
-              <input type="text" id="rinput-${sid}-${d.id}" placeholder="답글 입력"
-                onkeydown="if(event.key==='Enter')submitReply('${sid}','${d.id}')"/>
-              <button class="reply-send" onclick="submitReply('${sid}','${d.id}')">↑</button>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
-    // 대댓글 로드
-    snap.docs.forEach(d => loadReplies(sid, d.id));
+    const comments = [];
+    snap.forEach(d => comments.push({ id: d.id, ...d.data() }));
+    renderComments(sid, comments);
+    // 댓글 수 업데이트
+    const countEl = q(`#cmt-count-${sid}`);
+    if (countEl) countEl.textContent = comments.length > 0 ? `${comments.length}개 댓글` : '댓글 달기';
   });
 }
 
-async function loadReplies(sid, cid) {
-  const q_ = query(
-    collection(db, 'sentences', sid, 'comments', cid, 'replies'),
-    orderBy('createdAt','asc')
-  );
-  const snap = await getDocs(q_);
-  const el = q(`#replies-${sid}-${cid}`);
-  if (!el || snap.empty) return;
-  el.innerHTML = snap.docs.map(d => {
-    const r = d.data();
-    return `
-      <div class="reply-item">
-        <div class="reply-hd">
-          <div class="reply-av">${r.author[0]}</div>
-          <span class="reply-author">${esc(r.author)}</span>
-          <span class="reply-time">${fmtD(r.date||'')}</span>
-        </div>
-        <div class="reply-text">${esc(r.text)}</div>
-      </div>`;
-  }).join('');
-}
+function renderComments(sid, comments) {
+  const el = q(`#cmts-${sid}`);
+  if (!el) return;
 
-function toggleReplyForm(sid, cid) {
-  const el = q(`#replyform-${sid}-${cid}`);
-  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  // 루트 댓글 & 대댓글 분리
+  const roots   = comments.filter(c => !c.parentId);
+  const replyMap = {};
+  comments.filter(c => !!c.parentId).forEach(r => {
+    if (!replyMap[r.parentId]) replyMap[r.parentId] = [];
+    replyMap[r.parentId].push(r);
+  });
+
+  if (!roots.length) {
+    el.innerHTML = '<div style="text-align:center;padding:10px;font-size:12px;color:var(--muted)">첫 댓글을 남겨보세요!</div>';
+    return;
+  }
+
+  el.innerHTML = roots.map(c => `
+    <div class="cmt-item">
+      <div class="cmt-hd">
+        <div class="cmt-av">${c.memberName[0]}</div>
+        <span class="cmt-author">${esc(c.memberName)}</span>
+        <span class="cmt-time">${fmtD(c.date)}</span>
+      </div>
+      <div class="cmt-text">${esc(c.comment)}</div>
+      <button class="cmt-reply-btn" onclick="toggleReplyForm('${sid}','${c.id}')">↩ 답글</button>
+      <div id="replyform-${c.id}" style="display:none">
+        <div class="reply-form">
+          <select id="rname-${c.id}">${MEMBERS.map(m=>`<option value="${m}">${m}</option>`).join('')}</select>
+          <input type="text" id="rinput-${c.id}" placeholder="답글..."
+            onkeydown="if(event.key==='Enter')submitReply('${sid}','${c.id}')"/>
+          <button class="reply-send" onclick="submitReply('${sid}','${c.id}')">↑</button>
+        </div>
+      </div>
+      ${(replyMap[c.id]||[]).map(r => `
+        <div class="reply-item">
+          <div class="reply-hd">
+            <div class="reply-av">${r.memberName[0]}</div>
+            <span class="reply-author">${esc(r.memberName)}</span>
+            <span class="reply-time">${fmtD(r.date)}</span>
+          </div>
+          <div class="reply-text">${esc(r.comment)}</div>
+        </div>`).join('')}
+    </div>`).join('');
 }
-window.toggleReplyForm = toggleReplyForm;
 
 async function submitCmt(sid) {
-  const author = q(`#cname-${sid}`)?.value;
-  const text   = q(`#cinput-${sid}`)?.value.trim();
-  if (!author || !text) return;
-  try {
-    await addDoc(collection(db, 'sentences', sid, 'comments'), {
-      author, text, date: todayStr(), createdAt: serverTimestamp()
-    });
-    q(`#cinput-${sid}`).value = '';
-  } catch(e) { alert('오류: ' + e.message); }
+  const name  = q(`#cname-${sid}`)?.value;
+  const text  = q(`#cinput-${sid}`)?.value.trim();
+  if (!name || !text) return;
+  q(`#cinput-${sid}`).value = '';
+  await addDoc(collection(db, 'sentences', sid, 'comments'), {
+    memberName: name, comment: text, date: todayStr(),
+    parentId: null, createdAt: serverTimestamp()
+  });
 }
 window.submitCmt = submitCmt;
 
-async function submitReply(sid, cid) {
-  const author = q(`#rname-${sid}-${cid}`)?.value;
-  const text   = q(`#rinput-${sid}-${cid}`)?.value.trim();
-  if (!author || !text) return;
-  try {
-    await addDoc(collection(db, 'sentences', sid, 'comments', cid, 'replies'), {
-      author, text, date: todayStr(), createdAt: serverTimestamp()
-    });
-    q(`#rinput-${sid}-${cid}`).value = '';
-    await loadReplies(sid, cid);
-  } catch(e) { alert('오류: ' + e.message); }
+async function submitReply(sid, parentId) {
+  const name = q(`#rname-${parentId}`)?.value;
+  const text = q(`#rinput-${parentId}`)?.value.trim();
+  if (!name || !text) return;
+  q(`#rinput-${parentId}`).value = '';
+  q(`#replyform-${parentId}`).style.display = 'none';
+  await addDoc(collection(db, 'sentences', sid, 'comments'), {
+    memberName: name, comment: text, date: todayStr(),
+    parentId, createdAt: serverTimestamp()
+  });
 }
 window.submitReply = submitReply;
 
-// 부호 토글
-function toggleSym(btn) {
-  const t = btn.dataset.t;
-  const clsMap = { '!':'sel-bang', '"':'sel-quote', '?':'sel-qmark', '@':'sel-apply' };
-  if (selSyms.includes(t)) {
-    selSyms = selSyms.filter(s => s !== t);
-    btn.classList.remove(clsMap[t]);
-  } else {
-    selSyms.push(t);
-    btn.classList.add(clsMap[t]);
-  }
+function toggleReplyForm(sid, commentId) {
+  const form = q(`#replyform-${commentId}`);
+  if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
-window.toggleSym = toggleSym;
+window.toggleReplyForm = toggleReplyForm;
+
+// 구절 올리기
+function openFAB() { openOv('fabOv'); }
+window.openFAB = openFAB;
 
 async function submitSent() {
-  const name = q('#stName').value, text = q('#stText').value.trim();
-  if (!name || !text) { flash('sentAlert','이름과 구절을 입력해주세요.','e'); return; }
-  if (!selSyms.length) { flash('sentAlert','부호를 하나 이상 선택해주세요.','e'); return; }
+  const name = q('#stName').value, txt = q('#stText').value.trim();
+  if (!name || !txt) { flash('sentAlert','이름과 구절을 입력해주세요.','e'); return; }
   setLoad('sentBtn', true, '올리는 중...');
   try {
     await addDoc(collection(db, 'sentences'), {
-      month: thisMonth(), memberName: name, sentence: text,
-      page: q('#stPage').value || '', tags: selSyms.join(','),
+      month: thisMonth(), memberName: name, sentence: txt,
+      page: q('#stPage').value.trim(), tags: selSyms.join(','),
       date: todayStr(), commentCount: 0, createdAt: serverTimestamp()
     });
     closeOv('sentOv');
-    q('#stText').value = ''; q('#stPage').value = '';
     selSyms = [];
     document.querySelectorAll('.sym-select-item').forEach(b =>
-      b.classList.remove('sel-bang','sel-quote','sel-qmark','sel-apply')
-    );
+      b.classList.remove('sel-bang','sel-quote','sel-qmark','sel-apply'));
     await loadSentences();
+    goTab('Sent');
   } catch(e) { flash('sentAlert','오류: '+e.message,'e'); }
   finally { setLoad('sentBtn', false, '올리기'); }
 }
 window.submitSent = submitSent;
 
-// ══ 모임 준비 ═══════════════════════════════════════════
-const PREP_SYMS = [
-  { key:'!', cls:'bang',  icon:'❗', title:'! 느낌표', desc:'첫인상과 느낌' },
-  { key:'"', cls:'quote', icon:'💬', title:'" 따옴표', desc:'인용하고 싶은 문장' },
-  { key:'?', cls:'qmark', icon:'❓', title:'? 물음표', desc:'궁금한 점, 질문' },
-  { key:'@', cls:'apply', icon:'✨', title:'@ 적용',   desc:'삶에 적용할 것' },
-];
-
+// ══ 모임 준비 ═════════════════════════════════════════
 async function loadPrep() {
   const el = q('#prepContent');
-  el.innerHTML = '<div class="empty"><div class="ei">🦕</div>불러오는 중...</div>';
-  try {
-    const q_ = query(collection(db, 'preps'), where('month','==',thisMonth()));
-    const snap = await getDocs(q_);
-    const data = {};
-    snap.forEach(d => {
-      const p = d.data();
-      if (!data[p.symbol]) data[p.symbol] = [];
-      data[p.symbol].push(p);
-    });
-    el.innerHTML = PREP_SYMS.map(sym => `
-      <div class="prep-symbol ${sym.cls}">
-        <div class="prep-sym-hd">
-          <span class="prep-sym-icon">${sym.icon}</span>
-          <div>
-            <div class="prep-sym-title ${sym.cls}-c">${sym.title}</div>
-            <div class="prep-sym-desc">${sym.desc}</div>
-          </div>
+  const q_ = query(collection(db, 'preps'), where('month','==',thisMonth()));
+  const snap = await getDocs(q_);
+  const data = [];
+  snap.forEach(d => data.push({ id: d.id, ...d.data() }));
+
+  el.innerHTML = Object.entries(SYMBOLS).map(([sym, info]) => {
+    const items = data.filter(p => p.symbol === sym);
+    return `
+    <div class="prep-symbol ${info.cls}">
+      <div class="prep-sym-hd">
+        <span class="prep-sym-icon">${info.icon}</span>
+        <div>
+          <div class="prep-sym-title ${info.cls}-c">${info.label}</div>
+          <div class="prep-sym-desc">${info.desc}</div>
         </div>
-        <div class="prep-cards">
-          ${(data[sym.key]||[]).length === 0
-            ? `<div class="prep-empty">아직 없어요</div>`
-            : (data[sym.key]||[]).map(p => `
-                <div class="prep-card">
-                  <div class="prep-card-avatar">${p.memberName[0]}</div>
-                  <div>
-                    <div class="prep-card-name">${esc(p.memberName)}</div>
-                    <div class="prep-card-text">${esc(p.content)}${p.page?' <span style="font-size:10px;color:var(--muted)">(p.'+p.page+')</span>':''}</div>
-                  </div>
-                </div>`).join('')}
-        </div>
-        <button class="prep-add-btn ${sym.cls}" onclick="openPrepModal('${sym.key}')">+ ${sym.title} 추가</button>
-      </div>`).join('');
-  } catch(e) {
-    el.innerHTML = `<div class="empty"><div class="ei">⚠️</div>${e.message}</div>`;
-  }
+      </div>
+      <div class="prep-cards">
+        ${items.length
+          ? items.map(p => `
+            <div class="prep-card">
+              <div class="prep-card-avatar">${p.memberName[0]}</div>
+              <div style="flex:1;min-width:0">
+                <div class="prep-card-name">${esc(p.memberName)}${p.page?` · p.${p.page}`:''}</div>
+                <div class="prep-card-text">${esc(p.content)}</div>
+              </div>
+            </div>`).join('')
+          : `<div class="prep-empty">아직 입력된 내용이 없어요</div>`}
+      </div>
+      <button class="prep-add-btn ${info.cls}" onclick="openPrepModal('${sym}')">
+        ${info.icon} ${info.label} 추가
+      </button>
+    </div>`;
+  }).join('');
 }
 
 function openPrepModal(sym) {
   curPrepSym = sym;
-  const s = PREP_SYMS.find(s => s.key === sym);
-  q('#prepOvTitle').textContent = s ? `${s.icon} ${s.title}` : '모임 준비';
-  q('#prepText').value = ''; q('#prepPage').value = ''; q('#prepAlert').innerHTML = '';
+  const info = SYMBOLS[sym];
+  q('#prepOvTitle').textContent = `${info.icon} ${info.label}`;
+  q('#prepTextLabel').textContent = info.desc;
+  const ph = { '!':'책 표지나 제목에서 느낀 첫인상을 적어보세요',
+               '"':'인용하고 싶은 문장을 그대로 적어보세요',
+               '?':'읽으며 궁금했거나 의아했던 부분을 적어보세요',
+               '@':'삶에 적용하고 싶은 내용을 적어보세요' };
+  q('#prepText').placeholder = ph[sym] || '';
+  q('#prepText').value = '';
+  q('#prepPage').value = '';
+  q('#prepAlert').innerHTML = '';
   openOv('prepOv');
 }
 window.openPrepModal = openPrepModal;
@@ -990,11 +1171,11 @@ window.openPrepModal = openPrepModal;
 async function submitPrep() {
   const name = q('#prepName').value, text = q('#prepText').value.trim();
   if (!name || !text) { flash('prepAlert','이름과 내용을 입력해주세요.','e'); return; }
-  setLoad('prepBtn', true, '올리는 중...');
+  setLoad('prepBtn', true, '저장 중...');
   try {
     await addDoc(collection(db, 'preps'), {
-      month: thisMonth(), memberName: name, content: text,
-      symbol: curPrepSym, page: q('#prepPage').value || '',
+      month: thisMonth(), memberName: name, symbol: curPrepSym,
+      content: text, page: q('#prepPage').value.trim(),
       date: todayStr(), createdAt: serverTimestamp()
     });
     closeOv('prepOv');
@@ -1004,76 +1185,106 @@ async function submitPrep() {
 }
 window.submitPrep = submitPrep;
 
-// ══ 레퍼런스 ════════════════════════════════════════════
+// ══ 레퍼런스 ═════════════════════════════════════════
 async function loadRefs() {
   const el = q('#refList');
-  el.innerHTML = '<div class="empty"><div class="ei">📎</div>불러오는 중...</div>';
-  try {
-    const q_ = query(collection(db, 'references'), where('month','==',thisMonth()), orderBy('createdAt','desc'));
-    const snap = await getDocs(q_);
-    if (snap.empty) { el.innerHTML = '<div class="empty"><div class="ei">📎</div>아직 레퍼런스가 없어요</div>'; return; }
-    const typeIcon = { '유튜브🎬':'🎬', '기사📰':'📰', '블로그✍️':'✍️', '기타🔗':'🔗' };
-    el.innerHTML = snap.docs.map(d => {
-      const r = d.data();
-      return `
-        <a class="ref-card" href="${r.url||'#'}" target="_blank">
-          <div class="ref-type">${typeIcon[r.type]||'🔗'}</div>
-          <div>
-            <div class="ref-title">${esc(r.title)}</div>
-            <div class="ref-meta">${esc(r.memberName)} · ${fmtD(r.date)}</div>
-          </div>
-        </a>`;
-    }).join('');
-  } catch(e) {
-    el.innerHTML = `<div class="empty"><div class="ei">⚠️</div>${e.message}</div>`;
+  const q_ = query(collection(db,'refs'), where('month','==',thisMonth()), orderBy('createdAt','desc'));
+  const snap = await getDocs(q_);
+  if (snap.empty) {
+    el.innerHTML = `<div class="empty"><div class="ei">📎</div>아직 레퍼런스가 없어요</div>`;
+    return;
   }
+  const typeIcon = {'유튜브🎬':'🎬','기사📰':'📰','블로그✍️':'✍️','기타🔗':'🔗'};
+  el.innerHTML = '';
+  snap.forEach(d => {
+    const r = d.data();
+    el.innerHTML += `
+      <a class="ref-card" href="${r.url}" target="_blank" rel="noopener">
+        <div class="ref-type">${typeIcon[r.type]||'🔗'}</div>
+        <div>
+          <div class="ref-title">${esc(r.title)}</div>
+          <div class="ref-meta">${esc(r.memberName)} · ${fmtD(r.date)}</div>
+        </div>
+      </a>`;
+  });
 }
 
 async function submitRef() {
-  const name = q('#rfName').value, title = q('#rfTitle').value.trim();
-  if (!name || !title) { flash('refAlert','이름과 제목을 입력해주세요.','e'); return; }
+  const name=q('#rfName').value, title=q('#rfTitle').value.trim(), url=q('#rfUrl').value.trim();
+  if (!name||!title||!url) { flash('refAlert','모든 필드를 입력해주세요.','e'); return; }
   setLoad('refBtn', true, '추가 중...');
   try {
-    await addDoc(collection(db, 'references'), {
-      month: thisMonth(), memberName: name, title,
-      url: q('#rfUrl').value.trim(), type: q('#rfType').value,
-      date: todayStr(), createdAt: serverTimestamp()
+    await addDoc(collection(db,'refs'), {
+      month: thisMonth(), memberName: name, title, url,
+      type: q('#rfType').value, date: todayStr(), createdAt: serverTimestamp()
     });
     closeOv('refOv');
     await loadRefs();
+    goTab('Ref');
   } catch(e) { flash('refAlert','오류: '+e.message,'e'); }
   finally { setLoad('refBtn', false, '추가'); }
 }
 window.submitRef = submitRef;
 
-// ══ 아카이브 ════════════════════════════════════════════
+// ══ 아카이브 ═════════════════════════════════════════
 async function loadArchive() {
   const el = q('#archList');
-  el.innerHTML = '<div class="empty"><div class="ei">📚</div>불러오는 중...</div>';
-  try {
-    // settings에서 book_ 로 시작하는 문서 가져오기
-    const snap = await getDocs(collection(db, 'settings'));
-    const books = [];
-    snap.forEach(d => {
-      if (d.id.startsWith('book_')) books.push({ id: d.id, ...d.data() });
-    });
-    books.sort((a,b) => b.month.localeCompare(a.month));
-    if (!books.length) { el.innerHTML = '<div class="empty"><div class="ei">📚</div>아직 아카이브가 없어요</div>'; return; }
-    el.innerHTML = books.map(b => `
-      <div class="arch-card">
-        <div class="arch-month">${b.month?.slice(5)||''}<br>월</div>
-        ${b.coverUrl
-          ? `<img src="${b.coverUrl}" style="width:40px;height:56px;object-fit:cover;border-radius:4px;border:1px solid var(--border)" onerror="this.style.display='none'">`
-          : `<div style="width:40px;height:56px;background:var(--bg);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px">🦕</div>`}
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--green)">${esc(b.title||'')}</div>
-          <div style="font-size:11px;color:var(--muted)">${esc(b.author||'')}${b.publisher?' · '+esc(b.publisher):''}</div>
-        </div>
-      </div>`).join('');
-  } catch(e) {
-    el.innerHTML = `<div class="empty"><div class="ei">⚠️</div>${e.message}</div>`;
+  // settings 컬렉션에서 book_ 접두어 문서 전체 조회
+  const snap = await getDocs(collection(db, 'settings'));
+  const books = [];
+  snap.forEach(d => {
+    if (d.id.startsWith('book_')) books.push({ docId: d.id, ...d.data() });
+  });
+  books.sort((a, b) => b.month.localeCompare(a.month));
+  if (!books.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">📚</div>아직 아카이브가 없어요</div>`;
+    return;
   }
+  el.innerHTML = books.map(b => `
+    <div class="arch-card">
+      ${b.coverUrl
+        ? `<img src="${b.coverUrl}" style="width:40px;height:56px;object-fit:cover;border-radius:5px;border:1px solid var(--border);flex-shrink:0" onerror="this.style.display='none'">`
+        : `<div style="width:40px;height:56px;border-radius:5px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🦕</div>`}
+      <div class="arch-month">${b.month}</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--green)">${esc(b.title)}</div>
+        <div style="font-size:11px;color:var(--muted)">${esc(b.author||'')}</div>
+      </div>
+    </div>`).join('');
 }
+
+// ══ 부호 토글 ════════════════════════════════════════
+function toggleSym(btn) {
+  const t = btn.dataset.t, info = SYMBOLS[t];
+  if (!info) return;
+  const cls = `sel-${info.cls}`;
+  if (selSyms.includes(t)) { selSyms = selSyms.filter(x=>x!==t); btn.classList.remove(cls); }
+  else                     { selSyms.push(t); btn.classList.add(cls); }
+}
+window.toggleSym = toggleSym;
+
+// ══ 유틸 ═════════════════════════════════════════════
+function symBadge(t) {
+  const info = SYMBOLS[t];
+  if (!info) return '';
+  return `<span class="sym-badge sym-${info.cls}">${info.icon} ${info.label.split(' ')[0]}</span>`;
+}
+function flash(id, msg, type) {
+  const el = q(`#${id}`);
+  if (!el) return;
+  el.innerHTML = `<div class="alert ${type==='e'?'ae':'ao'}">${msg}</div>`;
+  if (type !== 'o') setTimeout(() => { el.innerHTML=''; }, 5000);
+}
+function setLoad(id, on, txt) {
+  const b = q(`#${id}`);
+  if (!b) return;
+  b.disabled = on;
+  if (txt) b.innerHTML = on ? `<span class="spin"></span>${txt}` : txt;
+}
+function openOv(id)  { q(`#${id}`)?.classList.add('on'); }
+function closeOv(id) { q(`#${id}`)?.classList.remove('on'); }
+window.openOv = openOv;
+window.closeOv = closeOv;
 </script>
 </body>
 </html>
