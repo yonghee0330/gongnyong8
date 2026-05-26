@@ -1151,7 +1151,7 @@ async function loadPrep() {
   }).join('');
 }
 
-function openPrepModal(sym) {
+function openPrepModal(sym) { if(sym==='QUOTE') sym='"';
   curPrepSym = sym;
   const info = SYMBOLS[sym];
   q('#prepOvTitle').textContent = `${info.icon} ${info.label}`;
