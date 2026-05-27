@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 독서 모임 소규모 비공개 앱 — 읽기/쓰기 허용
+    // (배포: Firebase Console → Firestore → 규칙 에 붙여넣기)
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

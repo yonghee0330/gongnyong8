@@ -487,6 +487,14 @@
         <button class="btn-sm" onclick="openOnelineModal()">+ 남기기</button>
       </div>
       <div class="oneliner-grid" id="onelineGrid"></div>
+
+      <div class="section-row" style="margin-top:14px">
+        <div class="section-label" style="margin:0">📎 <span id="refSectionLabel">레퍼런스</span></div>
+        <button class="btn-sm" type="button" onclick="openRefModal()">+ 추가</button>
+      </div>
+      <div id="homeRefList">
+        <div class="empty" style="padding:28px 16px"><div class="ei">📎</div>불러오는 중...</div>
+      </div>
     </div>
   </div>
 
@@ -685,7 +693,7 @@
     <div class="mtitle">무엇을 올릴까요? 🦕</div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <button class="btn btn-green" onclick="closeOv('fabOv');openOv('sentOv')">💬 구절 올리기</button>
-      <button class="btn btn-ghost" onclick="closeOv('fabOv');openOv('refOv')">📎 레퍼런스 추가</button>
+      <button class="btn btn-ghost" onclick="closeOv('fabOv');openRefModal()">📎 레퍼런스 추가</button>
       <button class="btn btn-ghost" onclick="closeOv('fabOv')">취소</button>
     </div>
   </div>
@@ -766,6 +774,8 @@ function updateMonthLabels() {
   if (bookTitle) bookTitle.textContent = `📖 ${label} 도서 설정`;
   const olLabel = q('#onelineSectionLabel');
   if (olLabel) olLabel.textContent = `${label} 한마디`;
+  const refLabel = q('#refSectionLabel');
+  if (refLabel) refLabel.textContent = `${label} 레퍼런스`;
 }
 
 function beginArchiveWrite(month) {
@@ -807,7 +817,7 @@ window.goTab = goTab;
 
 // ══ 홈 ═══════════════════════════════════════════════
 async function loadHome() {
-  await Promise.all([loadMeeting(), loadBook(), loadOneliners()]);
+  await Promise.all([loadMeeting(), loadBook(), loadOneliners(), loadHomeRefs()]);
 }
 
 // ── 모임 설정 ────────────────────────────────────────
@@ -1230,47 +1240,109 @@ async function submitPrep() {
 window.submitPrep = submitPrep;
 
 // ══ 레퍼런스 ═════════════════════════════════════════
-async function loadRefs() {
-  const el = q('#refList');
-  const q_ = query(
-    collection(db, 'refs'),
-    where('month', '==', activeMonth()),
-    orderBy('createdAt', 'desc')
-  );
-  const snap = await getDocs(q_);
-  if (snap.empty) {
-    el.innerHTML = `<div class="empty"><div class="ei">📎</div>아직 레퍼런스가 없어요</div>`;
-    return;
-  }
-  const typeIcon = {'유튜브🎬':'🎬','기사📰':'📰','블로그✍️':'✍️','기타🔗':'🔗'};
-  el.innerHTML = '';
-  snap.forEach(d => {
-    const r = d.data();
-    el.innerHTML += `
-      <a class="ref-card" href="${r.url}" target="_blank" rel="noopener">
-        <div class="ref-type">${typeIcon[r.type]||'🔗'}</div>
-        <div>
-          <div class="ref-title">${esc(r.title)}</div>
-          <div class="ref-meta">${esc(r.memberName)} · ${fmtD(r.date)}</div>
-        </div>
-      </a>`;
-  });
+const REF_TYPE_ICON = { '유튜브🎬': '🎬', '기사📰': '📰', '블로그✍️': '✍️', '기타🔗': '🔗' };
+
+function normalizeUrl(url) {
+  const value = String(url || '').trim();
+  if (!value) return '';
+  if (/^https?:\/\//i.test(value)) return value;
+  return `https://${value}`;
 }
 
-async function submitRef() {
-  const name=q('#rfName').value, title=q('#rfTitle').value.trim(), url=q('#rfUrl').value.trim();
-  if (!name||!title||!url) { flash('refAlert','모든 필드를 입력해주세요.','e'); return; }
-  setLoad('refBtn', true, '추가 중...');
+function renderRefCards(refs, el, emptyText = '아직 레퍼런스가 없어요') {
+  if (!refs.length) {
+    el.innerHTML = `<div class="empty" style="padding:28px 16px"><div class="ei">📎</div>${emptyText}</div>`;
+    return;
+  }
+  el.innerHTML = refs.map((r) => `
+    <a class="ref-card" href="${encodeURI(normalizeUrl(r.url))}" target="_blank" rel="noopener noreferrer">
+      <div class="ref-type">${REF_TYPE_ICON[r.type] || '🔗'}</div>
+      <div>
+        <div class="ref-title">${esc(r.title)}</div>
+        <div class="ref-meta">${esc(r.memberName)} · ${fmtD(r.date)}</div>
+      </div>
+    </a>`).join('');
+}
+
+async function fetchRefs(month) {
   try {
-    await addDoc(collection(db,'refs'), {
-      month: activeMonth(), memberName: name, title, url,
-      type: q('#rfType').value, date: todayStr(), createdAt: serverTimestamp()
+    const snap = await getDocs(query(
+      collection(db, 'refs'),
+      where('month', '==', month),
+      orderBy('createdAt', 'desc')
+    ));
+    const refs = [];
+    snap.forEach((d) => refs.push({ id: d.id, ...d.data() }));
+    return refs;
+  } catch (error) {
+    if (!String(error.message || '').includes('index')) throw error;
+    const snap = await getDocs(query(collection(db, 'refs'), where('month', '==', month)));
+    const refs = [];
+    snap.forEach((d) => refs.push({ id: d.id, ...d.data() }));
+    refs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    return refs;
+  }
+}
+
+async function loadHomeRefs() {
+  const el = q('#homeRefList');
+  if (!el) return;
+  try {
+    renderRefCards(await fetchRefs(activeMonth()), el);
+  } catch (error) {
+    el.innerHTML = `<div class="empty" style="padding:28px 16px"><div class="ei">⚠️</div>${esc(error.message)}</div>`;
+  }
+}
+
+async function loadRefs() {
+  const el = q('#refList');
+  if (!el) return;
+  el.innerHTML = `<div class="empty"><div class="ei">📎</div>불러오는 중...</div>`;
+  try {
+    renderRefCards(await fetchRefs(activeMonth()), el);
+  } catch (error) {
+    el.innerHTML = `<div class="empty"><div class="ei">⚠️</div>${esc(error.message)}</div>`;
+  }
+}
+
+function openRefModal() {
+  q('#rfTitle').value = '';
+  q('#rfUrl').value = '';
+  q('#refAlert').innerHTML = '';
+  openOv('refOv');
+}
+window.openRefModal = openRefModal;
+
+async function submitRef() {
+  const name = q('#rfName').value;
+  const title = q('#rfTitle').value.trim();
+  const url = normalizeUrl(q('#rfUrl').value);
+  if (!name || !title || !url) {
+    flash('refAlert', '이름, 제목, URL을 입력해주세요.', 'e');
+    return;
+  }
+  setLoad('refBtn', true, '저장 중...');
+  try {
+    await addDoc(collection(db, 'refs'), {
+      month: activeMonth(),
+      memberName: name,
+      title,
+      url,
+      type: q('#rfType').value,
+      date: todayStr(),
+      createdAt: serverTimestamp()
     });
     closeOv('refOv');
-    await loadRefs();
-    goTab('Ref');
-  } catch(e) { flash('refAlert','오류: '+e.message,'e'); }
-  finally { setLoad('refBtn', false, '추가'); }
+    q('#rfTitle').value = '';
+    q('#rfUrl').value = '';
+    await Promise.all([loadHomeRefs(), loadRefs()]);
+    goTab('Home');
+    flash('refAlert', '레퍼런스가 저장되었어요 🦕', 'o');
+  } catch (error) {
+    flash('refAlert', `저장 오류: ${error.message}`, 'e');
+  } finally {
+    setLoad('refBtn', false, '추가');
+  }
 }
 window.submitRef = submitRef;
 
@@ -1320,11 +1392,11 @@ async function openArchiveMonth(month) {
   el.innerHTML = `<div class="empty"><div class="ei">🦕</div>불러오는 중...</div>`;
 
   try {
-    const [bookSnap, sentSnap, prepSnap, refSnap, olSnap] = await Promise.all([
+    const [bookSnap, sentSnap, prepSnap, refs, olSnap] = await Promise.all([
       getDoc(doc(db, 'settings', 'book_' + month)),
       getDocs(query(collection(db, 'sentences'), where('month', '==', month), orderBy('createdAt', 'desc'))),
       getDocs(query(collection(db, 'preps'), where('month', '==', month))),
-      getDocs(query(collection(db, 'refs'), where('month', '==', month), orderBy('createdAt', 'desc'))),
+      fetchRefs(month),
       getDocs(query(collection(db, 'oneliners'), where('month', '==', month))),
     ]);
 
@@ -1333,12 +1405,8 @@ async function openArchiveMonth(month) {
     sentSnap.forEach(d => sentences.push({ id: d.id, ...d.data() }));
     const preps = [];
     prepSnap.forEach(d => preps.push({ id: d.id, ...d.data() }));
-    const refs = [];
-    refSnap.forEach(d => refs.push({ id: d.id, ...d.data() }));
     const onelinerMap = {};
     olSnap.forEach(d => { onelinerMap[d.data().memberName] = d.data().comment; });
-
-    const typeIcon = { '유튜브🎬': '🎬', '기사📰': '📰', '블로그✍️': '✍️', '기타🔗': '🔗' };
 
     el.innerHTML = `
       <div class="arch-section">
@@ -1420,17 +1488,9 @@ async function openArchiveMonth(month) {
 
       <div class="arch-section">
         <div class="arch-section-hd">📎 레퍼런스 (${refs.length})</div>
-        ${refs.length
-          ? refs.map(r => `
-            <a class="ref-card" href="${r.url}" target="_blank" rel="noopener">
-              <div class="ref-type">${typeIcon[r.type] || '🔗'}</div>
-              <div>
-                <div class="ref-title">${esc(r.title)}</div>
-                <div class="ref-meta">${esc(r.memberName)} · ${fmtD(r.date)}</div>
-              </div>
-            </a>`).join('')
-          : `<div class="prep-empty">레퍼런스가 없어요</div>`}
+        <div id="archRefList"></div>
       </div>`;
+    renderRefCards(refs, el.querySelector('#archRefList'), '레퍼런스가 없어요');
   } catch (e) {
     el.innerHTML = `<div class="empty"><div class="ei">⚠️</div>${esc(e.message)}</div>`;
   }
