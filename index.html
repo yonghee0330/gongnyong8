@@ -499,7 +499,7 @@
       <div class="filter-row" id="sentFilter">
         <button class="ftab active" data-f="all" onclick="filterSent('all',this)">전체</button>
         <button class="ftab" data-f="!" onclick="filterSent('!',this)">❗ 느낌표</button>
-        <button class="ftab" data-f='"' onclick="filterSent('"',this)">" 따옴표</button>
+        <button class="ftab" data-f='"' onclick='filterSent("\"",this)'>" 따옴표</button>
         <button class="ftab" data-f="?" onclick="filterSent('?',this)">? 물음표</button>
         <button class="ftab" data-f="@" onclick="filterSent('@',this)">@ 적용</button>
       </div>
@@ -777,6 +777,9 @@ const ACTIVE_MONTH = '2026-06';
 const ARCHIVE_MONTHS = ['2026-05'];
 
 const activeMonth = () => ACTIVE_MONTH;
+let writeMonthOverride = null; // 아카이브 상세에서 과거월에 추가 입력할 때 사용
+let currentArchiveMonth = null;
+const writeMonth = () => writeMonthOverride || activeMonth();
 const monthLabel = (key) => `${parseInt(key.split('-')[1], 10)}월`;
 const monthTitle = (key) => {
   const [y, m] = key.split('-');
@@ -805,6 +808,14 @@ function updateMonthLabels() {
   if (bookTitle) bookTitle.textContent = `📖 ${label} 도서 설정`;
   const olLabel = q('#onelineSectionLabel');
   if (olLabel) olLabel.textContent = `${label} 한마디`;
+}
+
+function beginArchiveWrite(month) {
+  writeMonthOverride = month;
+}
+
+function endArchiveWrite() {
+  writeMonthOverride = null;
 }
 
 function fillSelects() {
@@ -945,18 +956,32 @@ async function loadOneliners() {
 function openOnelineModal() { q('#olText').value=''; q('#olAlert').innerHTML=''; openOv('onelineOv'); }
 window.openOnelineModal = openOnelineModal;
 
+function openOnelineModalForMonth(month) {
+  beginArchiveWrite(month);
+  q('#olText').value = '';
+  q('#olAlert').innerHTML = '';
+  openOv('onelineOv');
+}
+window.openOnelineModalForMonth = openOnelineModalForMonth;
+
 async function submitOneline() {
   const name = q('#olName').value, text = q('#olText').value.trim();
   if (!name || !text) { flash('olAlert','이름과 한마디를 입력해주세요.','e'); return; }
   setLoad('olBtn', true, '등록 중...');
   try {
+    const m = writeMonth();
     // 같은 달 같은 멤버 → upsert
-    await setDoc(doc(db, 'oneliners', activeMonth() + '_' + name), {
-      month: activeMonth(), memberName: name, comment: text,
+    await setDoc(doc(db, 'oneliners', m + '_' + name), {
+      month: m, memberName: name, comment: text,
       date: todayStr(), updatedAt: serverTimestamp()
     });
     closeOv('onelineOv');
-    await loadOneliners();
+    if (currentArchiveMonth && currentArchiveMonth === m) {
+      await openArchiveMonth(m);
+      endArchiveWrite();
+    } else {
+      await loadOneliners();
+    }
   } catch(e) { flash('olAlert','오류: '+e.message,'e'); }
   finally { setLoad('olBtn', false, '등록'); }
 }
@@ -1147,13 +1172,25 @@ window.toggleReplyForm = toggleReplyForm;
 function openFAB() { openOv('fabOv'); }
 window.openFAB = openFAB;
 
+function openSentModalForMonth(month) {
+  beginArchiveWrite(month);
+  q('#stText').value = '';
+  q('#stPage').value = '';
+  q('#sentAlert').innerHTML = '';
+  selSyms = [];
+  document.querySelectorAll('.sym-select-item').forEach(b =>
+    b.classList.remove('sel-bang','sel-quote','sel-qmark','sel-apply'));
+  openOv('sentOv');
+}
+window.openSentModalForMonth = openSentModalForMonth;
+
 async function submitSent() {
   const name = q('#stName').value, txt = q('#stText').value.trim();
   if (!name || !txt) { flash('sentAlert','이름과 구절을 입력해주세요.','e'); return; }
   setLoad('sentBtn', true, '올리는 중...');
   try {
     await addDoc(collection(db, 'sentences'), {
-      month: activeMonth(), memberName: name, sentence: txt,
+      month: writeMonth(), memberName: name, sentence: txt,
       page: q('#stPage').value.trim(), tags: selSyms.join(','),
       date: todayStr(), commentCount: 0, createdAt: serverTimestamp()
     });
@@ -1161,8 +1198,14 @@ async function submitSent() {
     selSyms = [];
     document.querySelectorAll('.sym-select-item').forEach(b =>
       b.classList.remove('sel-bang','sel-quote','sel-qmark','sel-apply'));
-    await loadSentences();
-    goTab('Sent');
+    const m = writeMonth();
+    if (currentArchiveMonth && currentArchiveMonth === m) {
+      await openArchiveMonth(m);
+      endArchiveWrite();
+    } else {
+      await loadSentences();
+      goTab('Sent');
+    }
   } catch(e) { flash('sentAlert','오류: '+e.message,'e'); }
   finally { setLoad('sentBtn', false, '올리기'); }
 }
@@ -1224,18 +1267,30 @@ function openPrepModal(sym) {
 }
 window.openPrepModal = openPrepModal;
 
+function openPrepModalForMonth(month, sym) {
+  beginArchiveWrite(month);
+  openPrepModal(sym);
+}
+window.openPrepModalForMonth = openPrepModalForMonth;
+
 async function submitPrep() {
   const name = q('#prepName').value, text = q('#prepText').value.trim();
   if (!name || !text) { flash('prepAlert','이름과 내용을 입력해주세요.','e'); return; }
   setLoad('prepBtn', true, '저장 중...');
   try {
     await addDoc(collection(db, 'preps'), {
-      month: activeMonth(), memberName: name, symbol: curPrepSym,
+      month: writeMonth(), memberName: name, symbol: curPrepSym,
       content: text, page: q('#prepPage').value.trim(),
       date: todayStr(), createdAt: serverTimestamp()
     });
     closeOv('prepOv');
-    await loadPrep();
+    const m = writeMonth();
+    if (currentArchiveMonth && currentArchiveMonth === m) {
+      await openArchiveMonth(m);
+      endArchiveWrite();
+    } else {
+      await loadPrep();
+    }
   } catch(e) { flash('prepAlert','오류: '+e.message,'e'); }
   finally { setLoad('prepBtn', false, '올리기'); }
 }
@@ -1324,6 +1379,7 @@ async function loadArchive() {
 
 async function openArchiveMonth(month) {
   const el = q('#archDetail');
+  currentArchiveMonth = month;
   q('#archBackBtn').style.display = 'inline-flex';
   q('#archTopTitle').textContent = `📚 ${monthTitle(month)}`;
   q('#archList').style.display = 'none';
@@ -1371,6 +1427,10 @@ async function openArchiveMonth(month) {
 
       <div class="arch-section">
         <div class="arch-section-hd">💬 이달의 한마디</div>
+        <div class="section-row" style="margin:0 0 8px">
+          <div style="font-size:12px;color:var(--muted)">뒤늦게라도 추가로 남겨도 좋아요.</div>
+          <button class="btn-sm" type="button" onclick="openOnelineModalForMonth('${month}')">+ 남기기</button>
+        </div>
         <div class="oneliner-grid">
           ${MEMBERS.map(m => `
             <div class="oneliner-card">
@@ -1384,6 +1444,10 @@ async function openArchiveMonth(month) {
 
       <div class="arch-section">
         <div class="arch-section-hd">💬 구절 (${sentences.length})</div>
+        <div class="section-row" style="margin:0 0 8px">
+          <div style="font-size:12px;color:var(--muted)">과거 월에도 구절을 추가할 수 있어요.</div>
+          <button class="btn-sm" type="button" onclick="openSentModalForMonth('${month}')">+ 구절 올리기</button>
+        </div>
         ${sentences.length
           ? sentences.map(s => {
               const tags = (s.tags || '').split(',').filter(Boolean);
@@ -1403,6 +1467,7 @@ async function openArchiveMonth(month) {
         <div class="arch-section-hd">📋 모임 준비</div>
         ${Object.entries(SYMBOLS).map(([sym, info]) => {
           const items = preps.filter(p => p.symbol === sym);
+          const symKey = sym === '"' ? 'QUOTE' : sym;
           return `
           <div class="prep-symbol ${info.cls}" style="margin-bottom:10px">
             <div class="prep-sym-hd">
@@ -1421,6 +1486,7 @@ async function openArchiveMonth(month) {
                   </div>`).join('')
                 : `<div class="prep-empty">없음</div>`}
             </div>
+            <button class="btn-sm" type="button" style="margin-top:8px" onclick="openPrepModalForMonth('${month}','${symKey}')">+ 추가</button>
           </div>`;
         }).join('')}
       </div>
@@ -1444,6 +1510,8 @@ async function openArchiveMonth(month) {
 }
 
 function backArchive() {
+  currentArchiveMonth = null;
+  endArchiveWrite();
   loadArchive();
 }
 window.openArchiveMonth = openArchiveMonth;
