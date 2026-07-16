@@ -738,9 +738,28 @@ let curPrepSym = null;
 let allSentences = [];
 let sentUnsubscribers = {}; // 실시간 댓글 리스너
 
-// 현재 모임 월(6월) / 아카이브 월(5월)
-const ACTIVE_MONTH = '2026-06';
-const ARCHIVE_MONTHS = ['2026-05'];
+// 현재 모임 월(7월) / 아카이브 월(6월, 5월)
+const ACTIVE_MONTH = '2026-07';
+const ARCHIVE_MONTHS = ['2026-06', '2026-05'];
+
+const MONTH_DEFAULTS = {
+  '2026-07': {
+    meeting: {
+      date: '2026-07-29',
+      location: '',
+      note: '저녁 8시'
+    },
+    book: {
+      title: '공감의 배신',
+      author: '폴 블룸 · 이은진 (옮긴)',
+      publisher: '시공사 (2019)',
+      price: '17,000원',
+      coverUrl: 'https://image.aladin.co.kr/product/20426/80/cover500/k8952738967_1.jpg',
+      intro: '아직도 공감이 선하다고 믿는 당신에게. 예일대 심리학 교수 폴 블룸이 공감의 한계와 위험성, 그리고 더 나은 도덕적 판단을 위한 대안을 제시한다.',
+      link: 'https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=204268073'
+    }
+  }
+};
 
 const activeMonth = () => ACTIVE_MONTH;
 let writeMonthOverride = null; // 아카이브 상세에서 과거월에 추가 입력할 때 사용
@@ -753,18 +772,51 @@ const monthTitle = (key) => {
 };
 
 const todayStr  = () => new Date().toLocaleDateString('sv-SE');
+const fmtMeet = (iso) => {
+  if (!iso) return '';
+  const d = new Date(`${iso}T12:00:00`);
+  const wd = ['일','월','화','수','목','금','토'][d.getDay()];
+  return `${iso.slice(5).replace('-', '/')} (${wd})`;
+};
 const fmtD = s => s ? String(s).slice(5).replace('-', '/') : '';
 const esc  = s => String(s)
   .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 const q = sel => document.querySelector(sel);
 
 // ── 초기화 ───────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   fillSelects();
   updateMonthLabels();
+  await ensureActiveMonthSetup();
   loadHome();
   setupOverlayClose();
 });
+
+async function ensureActiveMonthSetup() {
+  const defaults = MONTH_DEFAULTS[ACTIVE_MONTH];
+  if (!defaults) return;
+
+  const flagRef = doc(db, 'settings', 'setup_' + ACTIVE_MONTH);
+  const flagSnap = await getDoc(flagRef);
+  if (flagSnap.exists()) return;
+
+  await setDoc(doc(db, 'settings', 'meeting'), {
+    ...defaults.meeting,
+    updatedAt: serverTimestamp()
+  });
+
+  const bookRef = doc(db, 'settings', 'book_' + ACTIVE_MONTH);
+  const bookSnap = await getDoc(bookRef);
+  if (!bookSnap.exists()) {
+    await setDoc(bookRef, {
+      month: ACTIVE_MONTH,
+      ...defaults.book,
+      updatedAt: serverTimestamp()
+    });
+  }
+
+  await setDoc(flagRef, { appliedAt: serverTimestamp() });
+}
 
 function updateMonthLabels() {
   const label = monthLabel(activeMonth());
@@ -832,7 +884,7 @@ async function loadMeeting() {
   if (diff > 0)       q('#ddayNum').textContent = 'D-' + diff;
   else if (diff === 0){ q('#ddayNum').textContent = 'D-DAY 🎉'; card.style.background='#e67e22'; }
   else                 q('#ddayNum').textContent = '모임 완료';
-  q('#ddayDate').textContent = `${m.date}${m.location?' · '+m.location:''}${m.note?' · '+m.note:''}`;
+  q('#ddayDate').textContent = `${fmtMeet(m.date)}${m.note ? ' · ' + m.note : ''}${m.location ? ' · ' + m.location : ''}`;
   q('#mtDate').value = m.date || '';
   q('#mtLoc').value  = m.location || '';
   q('#mtNote').value = m.note || '';
@@ -1379,7 +1431,7 @@ async function loadArchive() {
       </div>
       <span style="font-size:18px;color:var(--muted);flex-shrink:0">›</span>
     </button>`).join('')
-    + `<p class="arch-hint">현재 <strong>${monthTitle(activeMonth())}</strong> 모임이 진행 중이에요.<br>5월 기록은 카드를 눌러 확인하세요.</p>`;
+    + `<p class="arch-hint">현재 <strong>${monthTitle(activeMonth())}</strong> 모임이 진행 중이에요.<br>${ARCHIVE_MONTHS.map(monthLabel).join(', ')} 기록은 카드를 눌러 확인하세요.</p>`;
 }
 
 async function openArchiveMonth(month) {
