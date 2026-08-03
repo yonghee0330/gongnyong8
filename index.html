@@ -744,11 +744,20 @@ let curPrepSym = null;
 let allSentences = [];
 let sentUnsubscribers = {}; // 실시간 댓글 리스너
 
-// 현재 모임 월(7월) / 아카이브 월(6월, 5월)
-const ACTIVE_MONTH = '2026-07';
-const ARCHIVE_MONTHS = ['2026-06', '2026-05'];
+// 현재 모임 월(8월) / 아카이브 월(7월, 6월, 5월)
+const ACTIVE_MONTH = '2026-08';
+const ARCHIVE_MONTHS = ['2026-07', '2026-06', '2026-05'];
 
 const MONTH_DEFAULTS = {
+  '2026-08': {
+    version: 1,
+    meeting: {
+      date: '',
+      location: '',
+      note: ''
+    }
+    // 8월 도서·모임 날짜는 홈에서 직접 설정
+  },
   '2026-07': {
     version: 3,
     meeting: {
@@ -819,19 +828,22 @@ async function ensureActiveMonthSetup() {
   const flagSnap = await getDoc(flagRef);
   const applied = flagSnap.exists() ? flagSnap.data() : null;
 
-  if (!applied) {
+  if (!applied && defaults.meeting) {
     await setDoc(doc(db, 'settings', 'meeting'), {
       ...defaults.meeting,
       updatedAt: serverTimestamp()
     });
   }
 
-  if (!applied || applied.bookVersion !== version) {
+  if (defaults.book && (!applied || applied.bookVersion !== version)) {
     await setDoc(doc(db, 'settings', 'book_' + ACTIVE_MONTH), {
       month: ACTIVE_MONTH,
       ...defaults.book,
       updatedAt: serverTimestamp()
     });
+  }
+
+  if (!applied || (defaults.book && applied.bookVersion !== version)) {
     await setDoc(flagRef, {
       appliedAt: serverTimestamp(),
       bookVersion: version
@@ -896,12 +908,20 @@ async function loadHome() {
 // ── 모임 설정 ────────────────────────────────────────
 async function loadMeeting() {
   const snap = await getDoc(doc(db, 'settings', 'meeting'));
-  if (!snap.exists()) return;
+  const card = q('#ddayCard');
+  card.style.background = '';
+  if (!snap.exists() || !snap.data().date) {
+    q('#ddayNum').textContent = '-';
+    q('#ddayDate').textContent = '모임 날짜를 설정해주세요';
+    q('#mtDate').value = '';
+    q('#mtLoc').value = '';
+    q('#mtNote').value = '';
+    return;
+  }
   const m = snap.data();
   const today = new Date(); today.setHours(0,0,0,0);
   const meet  = new Date(m.date); meet.setHours(0,0,0,0);
   const diff  = Math.round((meet - today) / 86400000);
-  const card  = q('#ddayCard');
   if (diff > 0)       q('#ddayNum').textContent = 'D-' + diff;
   else if (diff === 0){ q('#ddayNum').textContent = 'D-DAY 🎉'; card.style.background='#e67e22'; }
   else                 q('#ddayNum').textContent = '모임 완료';
