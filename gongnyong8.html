@@ -750,13 +750,49 @@ const ARCHIVE_MONTHS = ['2026-07', '2026-06', '2026-05'];
 
 const MONTH_DEFAULTS = {
   '2026-08': {
-    version: 1,
+    version: 2,
     meeting: {
-      date: '',
+      date: '2026-08-25',
       location: '',
-      note: ''
+      note: '저녁 8시'
+    },
+    book: {
+      title: '당신이 집에서 논다는 거짓말',
+      subtitle: '남성들의 언어 속에 감춰진 가사 노동의 사회×역사×경제적 비밀을 파헤치다',
+      author: '정아은',
+      publisher: '천년의상상 (2020)',
+      price: '14,800원',
+      coverUrl: 'images/jibeseo-nonda.jpg',
+      intro: `“너 집에서 논다며?”
+
+주부들의 애환·고충·공감에서 한 발 더 들어가, 남성들의 언어 속에 감춰진 가사 노동의 사회·역사·경제적 비밀을 파헤칩니다.
+
+1장 주부들이 사는 외딴섬
+· “너 집에서 논다며?” — 주부들의 세상은 왜 이렇게 다른가 (소스타인 베블런, 『유한계급론』)
+· 다시 돌아간다면 그때도 회사를 그만둘 것인가 (레슬리 베네츠, 『여자에게 일이란 무엇인가』)
+· 나는 왜 요리를 싫어하게 되었을까 (라문숙, 『전업주부입니다만』)
+
+2장 핵심은 ‘돈’에 있다
+· 내가 살고 있는 세상은 어떤 곳인가 (카를 마르크스, 『자본론』)
+· 나는 왜 회사를 그리워하는가 (게오르크 지멜, 『돈의 철학』)
+· 나는 왜 뉴스에 나오지 않는가 (카트리네 마르살, 『잠깐 애덤 스미스 씨, 저녁은 누가 차려줬어요?』)
+· 아이 셋을 길러낸 전업주부는 왜 연금을 받지 못하는가 (낸시 폴브레, 『보이지 않는 가슴』)
+
+3장 자본주의사회에서 여성으로 산다는 것
+· 누가, 왜, 여성들을 불태웠는가 (실비아 페데리치, 『캘리번과 마녀』)
+· 누가 누구에게 의지하는가 (마리아 미즈, 『가부장제와 자본주의』)
+· 공존을 위해 무엇을 해야 하는가 (박가분, 『포비아 페미니즘』)
+· 내 몸 안에 갇힌 나를 어떻게 들여다볼 것인가 (로이 F. 바우마이스터, 『소모되는 남자』)
+
+4장 경계선 너머의 세상
+· 왜 가사 노동에 임금을 지불해야 하는가 (실비아 페데리치, 『혁명의 영점』)
+· 비구니가 『아빠수업』이라는 책을 낸다면 어떤 반응을 받을까 (법륜, 『엄마 수업』)
+· 비혼 여성과 기혼 여성은 연대할 수 있을까 (김하나·황선우, 『여자 둘이 살고 있습니다』)
+· 주부들은 왜 제 가족의 안위만 생각할까 (서영남, 『민들레 국수집』)
+
+글을 닫으며―자본주의와 함께 시작된 해묵은 거짓말`,
+      link: 'https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=238689246'
     }
-    // 8월 도서·모임 날짜는 홈에서 직접 설정
   },
   '2026-07': {
     version: 3,
@@ -827,15 +863,16 @@ async function ensureActiveMonthSetup() {
   const flagRef = doc(db, 'settings', 'setup_' + ACTIVE_MONTH);
   const flagSnap = await getDoc(flagRef);
   const applied = flagSnap.exists() ? flagSnap.data() : null;
+  const needsUpdate = !applied || applied.bookVersion !== version;
 
-  if (!applied && defaults.meeting) {
+  if (needsUpdate && defaults.meeting) {
     await setDoc(doc(db, 'settings', 'meeting'), {
       ...defaults.meeting,
       updatedAt: serverTimestamp()
     });
   }
 
-  if (defaults.book && (!applied || applied.bookVersion !== version)) {
+  if (needsUpdate && defaults.book) {
     await setDoc(doc(db, 'settings', 'book_' + ACTIVE_MONTH), {
       month: ACTIVE_MONTH,
       ...defaults.book,
@@ -843,7 +880,7 @@ async function ensureActiveMonthSetup() {
     });
   }
 
-  if (!applied || (defaults.book && applied.bookVersion !== version)) {
+  if (needsUpdate) {
     await setDoc(flagRef, {
       appliedAt: serverTimestamp(),
       bookVersion: version
@@ -971,7 +1008,7 @@ async function loadBook() {
         <div class="book-author">${esc(b.author||'')}${b.publisher?' · '+esc(b.publisher):''}</div>
         ${b.price?`<div style="font-size:11px;color:var(--muted)">${esc(b.price)}</div>`:''}
         ${b.intro?`<div class="book-intro">${esc(b.intro)}</div>`:''}
-        ${b.link?`<a href="${b.link}" target="_blank" rel="noopener" style="font-size:12px;color:var(--accent);display:inline-block;margin-top:8px">출판사 소개 →</a>`:''}
+        ${b.link?`<a href="${b.link}" target="_blank" rel="noopener" style="font-size:12px;color:var(--accent);display:inline-block;margin-top:8px">책 정보 →</a>`:''}
       </div>
     </div>`;
 }
@@ -1515,7 +1552,7 @@ async function openArchiveMonth(month) {
               <div class="book-author">${esc(book.author || '')}${book.publisher ? ' · ' + esc(book.publisher) : ''}</div>
               ${book.price ? `<div style="font-size:11px;color:var(--muted)">${esc(book.price)}</div>` : ''}
               ${book.intro ? `<div class="book-intro">${esc(book.intro)}</div>` : ''}
-              ${book.link ? `<a href="${book.link}" target="_blank" rel="noopener" style="font-size:12px;color:var(--accent);display:inline-block;margin-top:8px">출판사 소개 →</a>` : ''}
+              ${book.link ? `<a href="${book.link}" target="_blank" rel="noopener" style="font-size:12px;color:var(--accent);display:inline-block;margin-top:8px">책 정보 →</a>` : ''}
             </div>
           </div>` : `<div class="card" style="font-size:13px;color:var(--muted);text-align:center;padding:16px">등록된 도서 정보가 없어요</div>`}
       </div>
